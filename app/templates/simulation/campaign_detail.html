@@ -6,8 +6,7 @@
     <!-- Header -->
     <div class="flex justify-between items-start mb-8">
         <div class="flex items-center">
-            <a href="{{ url_for('simulation.campaigns') }}" 
-               class="text-blue-600 hover:text-blue-800 mr-4">
+            <a href="{{ url_for('simulation.campaigns') }}" class="text-blue-600 hover:text-blue-800 mr-4">
                 <i class="fas fa-arrow-left"></i>
             </a>
             <div>
@@ -15,7 +14,7 @@
                 <p class="text-gray-600 mt-1">{{ campaign.description or _('No description') }}</p>
             </div>
         </div>
-        
+
         <div class="flex items-center space-x-3">
             <span class="px-3 py-1 rounded-full text-sm font-medium
                 {% if campaign.status.value == 'running' %}bg-green-100 text-green-800
@@ -25,39 +24,39 @@
                 {% else %}bg-red-100 text-red-800{% endif %}">
                 {{ campaign.status.value.title() }}
             </span>
-            
+
             {% if campaign.status.value == 'draft' %}
-                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}" 
-                      style="display: inline;">
-                    <button type="submit" 
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
-                        <i class="fas fa-play mr-2"></i>{{ _('Start Campaign') }}
-                    </button>
-                </form>
+            <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}"
+                style="display: inline;">
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+                    <i class="fas fa-play mr-2"></i>{{ _('Start Campaign') }}
+                </button>
+            </form>
             {% elif campaign.status.value == 'running' %}
-                <form method="POST" action="{{ url_for('simulation.pause_campaign', id=campaign.id) }}" 
-                      style="display: inline;">
-                    <button type="submit" 
-                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition-colors">
-                        <i class="fas fa-pause mr-2"></i>{{ _('Pause') }}
-                    </button>
-                </form>
-                <form method="POST" action="{{ url_for('simulation.complete_campaign', id=campaign.id) }}" 
-                      style="display: inline;">
-                    <button type="submit" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
-                            onclick="return confirm('{{ _('Are you sure you want to complete this campaign?') }}')">
-                        <i class="fas fa-stop mr-2"></i>{{ _('Complete') }}
-                    </button>
-                </form>
+            <form method="POST" action="{{ url_for('simulation.pause_campaign', id=campaign.id) }}"
+                style="display: inline;">
+                <button type="submit"
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition-colors">
+                    <i class="fas fa-pause mr-2"></i>{{ _('Pause') }}
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('simulation.complete_campaign', id=campaign.id) }}"
+                style="display: inline;">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                    onclick="return confirm('{{ _('Are you sure you want to complete this campaign?') }}')">
+                    <i class="fas fa-stop mr-2"></i>{{ _('Complete') }}
+                </button>
+            </form>
             {% elif campaign.status.value == 'paused' %}
-                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}" 
-                      style="display: inline;">
-                    <button type="submit" 
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
-                        <i class="fas fa-play mr-2"></i>{{ _('Resume') }}
-                    </button>
-                </form>
+            <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}"
+                style="display: inline;">
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+                    <i class="fas fa-play mr-2"></i>{{ _('Resume') }}
+                </button>
+            </form>
             {% endif %}
         </div>
     </div>
@@ -124,9 +123,10 @@
                 </div>
                 <div class="w-16 h-16">
                     <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 32 32">
-                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" class="text-gray-200"/>
-                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" 
-                                stroke-dasharray="{{ analytics.success_rate * 0.88 }} 88" class="text-red-600"/>
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none"
+                            class="text-gray-200" />
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none"
+                            stroke-dasharray="{{ analytics.success_rate * 0.88 }} 88" class="text-red-600" />
                     </svg>
                 </div>
             </div>
@@ -141,9 +141,10 @@
                 </div>
                 <div class="w-16 h-16">
                     <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 32 32">
-                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" class="text-gray-200"/>
-                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" 
-                                stroke-dasharray="{{ analytics.awareness_rate * 0.88 }} 88" class="text-green-600"/>
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none"
+                            class="text-gray-200" />
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none"
+                            stroke-dasharray="{{ analytics.awareness_rate * 0.88 }} 88" class="text-green-600" />
                     </svg>
                 </div>
             </div>
@@ -245,7 +246,15 @@
                         {{ event.event_type.replace('_', ' ').title() }}
                     </p>
                     <p class="text-xs text-gray-500">
-                        {{ moment(event.timestamp).format('MMM DD, YYYY HH:mm') }}
+                        {% if event.timestamp.__class__.__name__ == 'str' %}
+                        {% set date_part = event.timestamp.split('T')[0] %}
+                        {% set time_part = event.timestamp.split('T')[1].split('.')[0] if '.' in event.timestamp else
+                        event.timestamp.split('T')[1] %}
+                        {% set formatted_time = time_part[:5] %}
+                        {{ date_part }} {{ formatted_time }}
+                        {% else %}
+                        {{ event.timestamp.strftime('%b %d, %Y %H:%M') }}
+                        {% endif %}
                     </p>
                 </div>
             </div>

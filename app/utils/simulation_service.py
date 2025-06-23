@@ -373,7 +373,7 @@ class PhishingSimulationService:
 
         # Timeline data
         events = db.session.query(CampaignEvent).filter_by(campaign_id=campaign_id).order_by(CampaignEvent.timestamp).all()
-        timeline = [event.to_dict() for event in events]
+        timeline = events  # Pass events directly instead of converting to dict
 
         # Department breakdown
         department_stats = {}
