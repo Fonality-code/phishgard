@@ -175,16 +175,26 @@ class PhishingSimulationService:
             html_content = template.html_content
             text_content = template.text_content or ""
 
-            # Replace placeholders
+            # Replace placeholders - supporting both old and new format for backward compatibility
             replacements = {
+                # Old format (without employee prefix)
                 '{{first_name}}': target.employee.first_name,
                 '{{last_name}}': target.employee.last_name,
                 '{{full_name}}': target.employee.full_name,
                 '{{email}}': target.employee.email,
                 '{{department}}': target.employee.department or '',
                 '{{position}}': target.employee.position or '',
+                # New format (with employee prefix) - matching documentation
+                '{{employee.first_name}}': target.employee.first_name,
+                '{{employee.last_name}}': target.employee.last_name,
+                '{{employee.full_name}}': target.employee.full_name,
+                '{{employee.email}}': target.employee.email,
+                '{{employee.department}}': target.employee.department or '',
+                '{{employee.position}}': target.employee.position or '',
+                # Tracking and phishing link placeholders
                 '{{tracking_pixel}}': f'<img src="{tracking_pixel_url}" width="1" height="1" style="display:none;" />',
-                '{{phishing_link}}': phishing_link_url
+                '{{phishing_link}}': phishing_link_url,
+                '{{tracking_url}}': phishing_link_url  # Alternative name for phishing link
             }
 
             for placeholder, value in replacements.items():
