@@ -2,211 +2,178 @@
 
 {% block title %}Email Templates - PhishGuard{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">Email Templates</h1>
-                <a href="{{ url_for('simulation.create_email_template') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create Template
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Email Templates</h1>
+            <a href="{{ url_for('simulation.create_email_template') }}"
+                class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg shadow">
+                <i class="fas fa-plus mr-2"></i> Create Template
+            </a>
+        </div>
+
+        <!-- Filter and Search -->
+        <form method="GET" class="flex flex-col md:flex-row gap-4 mb-6">
+            <input type="text" name="search" placeholder="Search templates..."
+                value="{{ request.args.get('search', '') }}"
+                class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500" />
+            <select name="category"
+                class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                <option value="">All Categories</option>
+                <option value="social_engineering" {{ 'selected' if request.args.get('category')=='social_engineering'
+                    }}>Social Engineering</option>
+                <option value="phishing" {{ 'selected' if request.args.get('category')=='phishing' }}>Phishing</option>
+                <option value="spear_phishing" {{ 'selected' if request.args.get('category')=='spear_phishing' }}>Spear
+                    Phishing</option>
+                <option value="business_email_compromise" {{ 'selected' if
+                    request.args.get('category')=='business_email_compromise' }}>Business Email Compromise</option>
+                <option value="credential_harvesting" {{ 'selected' if
+                    request.args.get('category')=='credential_harvesting' }}>Credential Harvesting</option>
+            </select>
+            <select name="difficulty"
+                class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                <option value="">All Difficulty Levels</option>
+                <option value="low" {{ 'selected' if request.args.get('difficulty')=='low' }}>Low</option>
+                <option value="medium" {{ 'selected' if request.args.get('difficulty')=='medium' }}>Medium</option>
+                <option value="high" {{ 'selected' if request.args.get('difficulty')=='high' }}>High</option>
+            </select>
+            <button type="submit"
+                class="inline-flex items-center justify-center px-4 py-2 bg-primary-50 text-primary-700 border border-primary-200 rounded-lg hover:bg-primary-100 transition">
+                <i class="fas fa-search mr-2"></i> Filter
+            </button>
+        </form>
+
+        <!-- Templates Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {% for template in templates.items %}
+            <div class="bg-white rounded-xl shadow border border-gray-100 flex flex-col h-full">
+                <div class="flex items-start justify-between px-4 py-3 border-b border-gray-100">
+                    <h2 class="font-semibold text-lg text-gray-900 truncate">{{ template.name }}</h2>
+                    <div class="relative group">
+                        <button class="text-gray-400 hover:text-gray-700 focus:outline-none"
+                            onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul
+                            class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 hidden group-hover:block">
+                            <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    href="{{ url_for('simulation.edit_email_template', id=template.id) }}"><i
+                                        class="fas fa-edit mr-2"></i> Edit</a></li>
+                            <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#"
+                                    onclick="duplicateTemplate({{ template.id }})"><i class="fas fa-copy mr-2"></i>
+                                    Duplicate</a></li>
+                            <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#"
+                                    onclick="previewTemplate({{ template.id }})"><i class="fas fa-eye mr-2"></i>
+                                    Preview</a></li>
+                            <li>
+                                <hr class="my-1 border-gray-200">
+                            </li>
+                            <li><a class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50" href="#"
+                                    onclick="deleteTemplate({{ template.id }})"><i class="fas fa-trash mr-2"></i>
+                                    Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="px-4 py-3 flex-1 flex flex-col">
+                    <div class="mb-2 flex items-center gap-2">
+                        <span class="inline-block px-2 py-1 text-xs rounded bg-primary-100 text-primary-700">{{
+                            template.category.replace('_', ' ').title() }}</span>
+                        <span
+                            class="inline-block px-2 py-1 text-xs rounded {{ 'bg-green-100 text-green-700' if template.difficulty == 'low' else 'bg-yellow-100 text-yellow-800' if template.difficulty == 'medium' else 'bg-red-100 text-red-700' }}">{{
+                            template.difficulty.title() }}</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-2">{{ template.description[:100] }}{% if
+                        template.description|length > 100 %}...{% endif %}</p>
+                    <div class="text-xs text-gray-400 mb-2">
+                        <div><span class="font-medium">Subject:</span> {{ template.subject[:50] }}{% if
+                            template.subject|length > 50 %}...{% endif %}</div>
+                        <div><span class="font-medium">Created:</span> {{ template.created_at.strftime('%b %d, %Y') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+                    <span class="text-xs text-gray-400">Used in {{ template.campaigns|length }} campaigns</span>
+                    <a href="{{ url_for('simulation.create_campaign') }}?template={{ template.id }}"
+                        class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-primary-50 text-primary-700 border border-primary-200 rounded hover:bg-primary-100">Use
+                        Template</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-envelope fa-3x text-gray-300 mb-3"></i>
+                <h4 class="text-lg font-semibold text-gray-500">No Email Templates Found</h4>
+                <p class="text-gray-400 mb-4">Create your first email template to start running phishing simulations.
+                </p>
+                <a href="{{ url_for('simulation.create_email_template') }}"
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg shadow">
+                    <i class="fas fa-plus mr-2"></i> Create Template
                 </a>
             </div>
-
-            <!-- Filter and Search -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form method="GET" class="row g-3">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" name="search" placeholder="Search templates..."
-                                value="{{ request.args.get('search', '') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select" name="category">
-                                <option value="">All Categories</option>
-                                <option value="social_engineering" {{ 'selected' if
-                                    request.args.get('category')=='social_engineering' }}>Social Engineering</option>
-                                <option value="phishing" {{ 'selected' if request.args.get('category')=='phishing' }}>
-                                    Phishing</option>
-                                <option value="spear_phishing" {{ 'selected' if
-                                    request.args.get('category')=='spear_phishing' }}>Spear Phishing</option>
-                                <option value="business_email_compromise" {{ 'selected' if
-                                    request.args.get('category')=='business_email_compromise' }}>Business Email
-                                    Compromise</option>
-                                <option value="credential_harvesting" {{ 'selected' if
-                                    request.args.get('category')=='credential_harvesting' }}>Credential Harvesting
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select" name="difficulty">
-                                <option value="">All Difficulty Levels</option>
-                                <option value="low" {{ 'selected' if request.args.get('difficulty')=='low' }}>Low
-                                </option>
-                                <option value="medium" {{ 'selected' if request.args.get('difficulty')=='medium' }}>
-                                    Medium</option>
-                                <option value="high" {{ 'selected' if request.args.get('difficulty')=='high' }}>High
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-search"></i> Filter
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Templates Grid -->
-            <div class="row">
-                {% for template in templates.items %}
-                <div class="col-lg-6 col-xl-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-start">
-                            <h6 class="card-title mb-0">{{ template.name }}</h6>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item"
-                                            href="{{ url_for('simulation.edit_email_template', id=template.id) }}">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#"
-                                            onclick="duplicateTemplate({{ template.id }})">
-                                            <i class="fas fa-copy"></i> Duplicate
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#" onclick="previewTemplate({{ template.id }})">
-                                            <i class="fas fa-eye"></i> Preview
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="#"
-                                            onclick="deleteTemplate({{ template.id }})">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <span class="badge bg-primary me-2">{{ template.category.replace('_', ' ').title()
-                                    }}</span>
-                                <span
-                                    class="badge bg-{{ 'success' if template.difficulty == 'low' else 'warning' if template.difficulty == 'medium' else 'danger' }}">
-                                    {{ template.difficulty.title() }}
-                                </span>
-                            </div>
-
-                            <p class="card-text text-muted small">{{ template.description[:100] }}{% if
-                                template.description|length > 100 %}...{% endif %}</p>
-
-                            <div class="small text-muted">
-                                <div><strong>Subject:</strong> {{ template.subject[:50] }}{% if template.subject|length
-                                    > 50 %}...{% endif %}</div>
-                                <div><strong>Created:</strong> {{ template.created_at.strftime('%b %d, %Y') }}</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    Used in {{ template.campaigns|length }} campaigns
-                                </small>
-                                <a href="{{ url_for('simulation.create_campaign') }}?template={{ template.id }}"
-                                    class="btn btn-sm btn-outline-primary">
-                                    Use Template
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
-                        <h4>No Email Templates Found</h4>
-                        <p class="text-muted">Create your first email template to start running phishing simulations.
-                        </p>
-                        <a href="{{ url_for('simulation.create_email_template') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Create Template
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- Pagination -->
-            {% if templates.pages > 1 %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if templates.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('simulation.email_templates', page=templates.prev_num, **request.args) }}">Previous</a>
-                    </li>
-                    {% endif %}
-
-                    {% for page_num in templates.iter_pages() %}
-                    {% if page_num %}
-                    {% if page_num != templates.page %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('simulation.email_templates', page=page_num, **request.args) }}">{{
-                            page_num }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item active">
-                        <span class="page-link">{{ page_num }}</span>
-                    </li>
-                    {% endif %}
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-
-                    {% if templates.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="{{ url_for('simulation.email_templates', page=templates.next_num, **request.args) }}">Next</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+            {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        {% if templates.pages > 1 %}
+        <nav class="mt-8 flex justify-center" aria-label="Page navigation">
+            <ul class="inline-flex -space-x-px">
+                {% if templates.has_prev %}
+                <li>
+                    <a href="{{ url_for('simulation.email_templates', page=templates.prev_num, **request.args) }}"
+                        class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>
+                </li>
+                {% endif %}
+                {% for page_num in templates.iter_pages() %}
+                {% if page_num %}
+                {% if page_num != templates.page %}
+                <li>
+                    <a href="{{ url_for('simulation.email_templates', page=page_num, **request.args) }}"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{
+                        page_num }}</a>
+                </li>
+                {% else %}
+                <li>
+                    <span class="px-3 py-2 leading-tight text-primary-700 bg-primary-100 border border-primary-300">{{
+                        page_num }}</span>
+                </li>
+                {% endif %}
+                {% else %}
+                <li>
+                    <span class="px-3 py-2 leading-tight text-gray-400 bg-white border border-gray-300">...</span>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% if templates.has_next %}
+                <li>
+                    <a href="{{ url_for('simulation.email_templates', page=templates.next_num, **request.args) }}"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </div>
 
 <!-- Template Preview Modal -->
-<div class="modal fade" id="templatePreviewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Template Preview</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="templatePreviewContent">
-                    <!-- Preview content will be loaded here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+<div id="templatePreviewModal"
+    class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl mx-auto">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h5 class="text-lg font-semibold">Template Preview</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-700"
+                onclick="document.getElementById('templatePreviewModal').classList.add('hidden')">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="px-6 py-4" id="templatePreviewContent">
+            <!-- Preview content will be loaded here -->
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+            <button type="button"
+                class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                onclick="document.getElementById('templatePreviewModal').classList.add('hidden')">Close</button>
         </div>
     </div>
 </div>
@@ -223,11 +190,11 @@
                 <div class="mb-3">
                     <strong>From:</strong> ${data.sender_name} &lt;${data.sender_email}&gt;
                 </div>
-                <div class="border rounded p-3">
+                <div class="border rounded p-3 bg-gray-50">
                     ${data.html_content}
                 </div>
             `;
-                new bootstrap.Modal(document.getElementById('templatePreviewModal')).show();
+                document.getElementById('templatePreviewModal').classList.remove('hidden');
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -243,18 +210,18 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to duplicate template');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     alert('Failed to duplicate template');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to duplicate template');
-            });
+                });
         }
     }
 
@@ -266,18 +233,18 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete template');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     alert('Failed to delete template');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to delete template');
-            });
+                });
         }
     }
 </script>
