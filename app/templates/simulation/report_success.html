@@ -1,0 +1,362 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Report Received - PhishGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center py-5">
+                <!-- Success Icon -->
+                <div class="mb-4">
+                    <div class="success-icon">
+                        <i class="fas fa-shield-alt fa-5x text-success"></i>
+                        <div class="checkmark">
+                            <i class="fas fa-check fa-2x text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <h1 class="h2 text-success mb-3">Excellent Work!</h1>
+                <h2 class="h4 mb-4">You Successfully Reported a Phishing Attempt</h2>
+
+                <!-- Explanation -->
+                <div class="alert alert-success" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-lightbulb me-2"></i>What Just Happened?
+                    </h5>
+                    <p class="mb-0">
+                        The email you received was part of a <strong>security awareness training simulation</strong>.
+                        By reporting it as suspicious, you demonstrated excellent cybersecurity awareness!
+                    </p>
+                </div>
+
+                <!-- Key Points -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-graduation-cap me-2"></i>Key Learning Points
+                        </h5>
+                    </div>
+                    <div class="card-body text-start">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-success">
+                                    <i class="fas fa-check-circle me-2"></i>What You Did Right:
+                                </h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-arrow-right text-success me-2"></i>Recognized suspicious
+                                        content</li>
+                                    <li><i class="fas fa-arrow-right text-success me-2"></i>Didn't click suspicious
+                                        links</li>
+                                    <li><i class="fas fa-arrow-right text-success me-2"></i>Reported the email promptly
+                                    </li>
+                                    <li><i class="fas fa-arrow-right text-success me-2"></i>Followed security protocols
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-info">
+                                    <i class="fas fa-eye me-2"></i>Warning Signs to Watch For:
+                                </h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Urgent or
+                                        threatening language</li>
+                                    <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Requests for
+                                        personal information</li>
+                                    <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Suspicious sender
+                                        addresses</li>
+                                    <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Unexpected
+                                        attachments or links</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-road me-2"></i>Continue Your Security Journey
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Want to learn more about cybersecurity? Check out these additional resources:</p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="#" class="btn btn-outline-primary" onclick="viewTrainingModules()">
+                                <i class="fas fa-book me-2"></i>View Training Modules
+                            </a>
+                            <a href="#" class="btn btn-outline-info" onclick="takeCyberQuiz()">
+                                <i class="fas fa-question-circle me-2"></i>Take Cyber Quiz
+                            </a>
+                            <a href="#" class="btn btn-outline-success" onclick="downloadGuide()">
+                                <i class="fas fa-download me-2"></i>Security Guide
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="row text-center mb-4">
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <h3 class="text-primary">{{ stats.total_reports }}</h3>
+                            <small class="text-muted">Total Reports This Month</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <h3 class="text-success">{{ stats.your_reports }}</h3>
+                            <small class="text-muted">Your Reports</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <h3 class="text-info">{{ stats.detection_rate }}%</h3>
+                            <small class="text-muted">Company Detection Rate</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="alert alert-light border" role="alert">
+                    <h6 class="mb-2">
+                        <i class="fas fa-users me-2"></i>Help Protect Your Organization
+                    </h6>
+                    <p class="mb-3">
+                        Share your knowledge with colleagues and help create a more secure workplace for everyone.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="shareSuccess()">
+                            <i class="fas fa-share me-2"></i>Share This Success
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="provideFeedback()">
+                            <i class="fas fa-comment me-2"></i>Provide Feedback
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-4">
+                    <p class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        This was a simulated phishing test conducted by your organization's IT security team
+                        to help improve cybersecurity awareness. No real threats were involved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Provide Feedback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label class="form-label">How realistic was this phishing simulation?</label>
+                        <div class="rating">
+                            <input type="radio" name="realism" value="5" id="r5"><label for="r5">⭐⭐⭐⭐⭐</label>
+                            <input type="radio" name="realism" value="4" id="r4"><label for="r4">⭐⭐⭐⭐</label>
+                            <input type="radio" name="realism" value="3" id="r3"><label for="r3">⭐⭐⭐</label>
+                            <input type="radio" name="realism" value="2" id="r2"><label for="r2">⭐⭐</label>
+                            <input type="radio" name="realism" value="1" id="r1"><label for="r1">⭐</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">What made you suspicious of this email?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="sender" id="sender">
+                            <label class="form-check-label" for="sender">Suspicious sender address</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="urgency" id="urgency">
+                            <label class="form-check-label" for="urgency">Urgent/threatening language</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="links" id="links">
+                            <label class="form-check-label" for="links">Suspicious links</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="grammar" id="grammar">
+                            <label class="form-check-label" for="grammar">Poor grammar/spelling</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="unexpected" id="unexpected">
+                            <label class="form-check-label" for="unexpected">Unexpected email</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comments" class="form-label">Additional Comments</label>
+                        <textarea class="form-control" id="comments" rows="3"
+                            placeholder="Share your thoughts about this simulation..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .success-icon {
+        position: relative;
+        display: inline-block;
+    }
+
+    .checkmark {
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+        background-color: #28a745;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-box {
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+    .rating input {
+        display: none;
+    }
+
+    .rating label {
+        cursor: pointer;
+        padding: 0 5px;
+        font-size: 1.2rem;
+    }
+
+    .rating input:checked~label,
+    .rating label:hover,
+    .rating label:hover~label {
+        color: #ffc107;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .container>.row>.col-md-8 {
+        animation: fadeInUp 0.6s ease-out;
+    }
+</style>
+
+<script>
+    function viewTrainingModules() {
+        // This would redirect to the training modules page
+        alert('Redirecting to training modules...');
+    }
+
+    function takeCyberQuiz() {
+        // This would open a cybersecurity quiz
+        alert('Opening cybersecurity quiz...');
+    }
+
+    function downloadGuide() {
+        // This would download a security guide
+        alert('Downloading security guide...');
+    }
+
+    function shareSuccess() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'I successfully identified a phishing simulation!',
+                text: 'I just completed a cybersecurity awareness test by correctly identifying a phishing email. Stay vigilant!',
+                url: window.location.href
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            const text = 'I successfully identified a phishing simulation! 🛡️ #CyberSecurity #PhishingAwareness';
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`, '_blank');
+        }
+    }
+
+    function provideFeedback() {
+        new bootstrap.Modal(document.getElementById('feedbackModal')).show();
+    }
+
+    function submitFeedback() {
+        const form = document.getElementById('feedbackForm');
+        const formData = new FormData(form);
+
+        // Collect checkbox values
+        const suspiciousFactors = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            suspiciousFactors.push(checkbox.value);
+        });
+
+        const feedbackData = {
+            realism: formData.get('realism'),
+            suspicious_factors: suspiciousFactors,
+            comments: document.getElementById('comments').value,
+            report_id: '{{ report_id if report_id else "" }}'
+        };
+
+        fetch('/simulation/submit-feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(feedbackData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+                    alert('Thank you for your feedback!');
+                } else {
+                    alert('Failed to submit feedback. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit feedback. Please try again.');
+            });
+    }
+
+    // Auto-hide any flash messages after 5 seconds
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.alert-dismissible');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+</script>
+{% endblock %}

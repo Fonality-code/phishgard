@@ -1,6 +1,6 @@
 Hello {{ user.first_name or user.username }},
 
-Thank you for registering with {{ config.APP_NAME }}!
+Thank you for registering with PhishGuard!
 
 To complete your account setup and verify your email address, please click the link below:
 
@@ -11,7 +11,7 @@ This verification link will expire in 24 hours for security reasons.
 If you did not create an account with us, please ignore this email.
 
 Best regards,
-The {{ config.APP_NAME }} Team
+The PhishGuard Team
 
 ---
 If you're having trouble clicking the link, copy and paste the following URL into your web browser:

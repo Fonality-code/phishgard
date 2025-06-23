@@ -11,10 +11,10 @@
                 <div class="flex items-center">
                     <div
                         class="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 shadow-medium">
-                        <i class="fas fa-cube text-white text-lg"></i>
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
                     </div>
                     <div class="ml-3">
-                        <h1 class="text-xl font-display font-semibold text-secondary-900">{{ _('WebApp') }}</h1>
+                        <h1 class="text-xl font-display font-semibold text-secondary-900">{{ _('PhishGuard') }}</h1>
                         <p class="text-xs text-secondary-500 font-medium">{{ _('Professional Dashboard') }}</p>
                     </div>
                 </div>
@@ -67,9 +67,9 @@
             <div class="flex items-center">
                 <div
                     class="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 shadow-medium">
-                    <i class="fas fa-cube text-white text-sm"></i>
+                    <i class="fas fa-shield-alt text-white text-sm"></i>
                 </div>
-                <h1 class="ml-2 text-lg font-display font-semibold text-secondary-900">{{ _('WebApp') }}</h1>
+                <h1 class="ml-2 text-lg font-display font-semibold text-secondary-900">{{ _('PhishGuard') }}</h1>
             </div>
             <div class="w-10"></div> <!-- Spacer for centering -->
         </div>
@@ -91,9 +91,10 @@
                     <div class="flex items-center">
                         <div
                             class="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 shadow-medium">
-                            <i class="fas fa-cube text-white text-sm"></i>
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
                         </div>
-                        <h1 class="ml-2 text-lg font-display font-semibold text-secondary-900">{{ _('WebApp') }}</h1>
+                        <h1 class="ml-2 text-lg font-display font-semibold text-secondary-900">{{ _('PhishGuard') }}
+                        </h1>
                     </div>
                     <button @click="sidebarOpen = false"
                         class="p-2 rounded-xl text-secondary-400 hover:text-secondary-600 hover:bg-secondary-100 transition-all duration-200">
@@ -119,7 +120,8 @@
                         {% endif %}
                         <div class="ml-3">
                             <p class="text-sm font-semibold text-secondary-900">{{ current_user.first_name }}</p>
-                            <p class="text-xs text-secondary-500 font-medium">{{ _(current_user.account_type.title()) }}</p>
+                            <p class="text-xs text-secondary-500 font-medium">{{ _(current_user.account_type.title()) }}
+                            </p>
                         </div>
                     </div>
                 </div>

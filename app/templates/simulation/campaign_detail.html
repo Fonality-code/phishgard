@@ -1,0 +1,259 @@
+{% extends 'layouts/app.html' %}
+{% set title = _('Campaign Details') %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-8">
+        <div class="flex items-center">
+            <a href="{{ url_for('simulation.campaigns') }}" 
+               class="text-blue-600 hover:text-blue-800 mr-4">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">{{ campaign.name }}</h1>
+                <p class="text-gray-600 mt-1">{{ campaign.description or _('No description') }}</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+            <span class="px-3 py-1 rounded-full text-sm font-medium
+                {% if campaign.status.value == 'running' %}bg-green-100 text-green-800
+                {% elif campaign.status.value == 'completed' %}bg-blue-100 text-blue-800
+                {% elif campaign.status.value == 'draft' %}bg-gray-100 text-gray-800
+                {% elif campaign.status.value == 'paused' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-red-100 text-red-800{% endif %}">
+                {{ campaign.status.value.title() }}
+            </span>
+            
+            {% if campaign.status.value == 'draft' %}
+                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}" 
+                      style="display: inline;">
+                    <button type="submit" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+                        <i class="fas fa-play mr-2"></i>{{ _('Start Campaign') }}
+                    </button>
+                </form>
+            {% elif campaign.status.value == 'running' %}
+                <form method="POST" action="{{ url_for('simulation.pause_campaign', id=campaign.id) }}" 
+                      style="display: inline;">
+                    <button type="submit" 
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition-colors">
+                        <i class="fas fa-pause mr-2"></i>{{ _('Pause') }}
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('simulation.complete_campaign', id=campaign.id) }}" 
+                      style="display: inline;">
+                    <button type="submit" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                            onclick="return confirm('{{ _('Are you sure you want to complete this campaign?') }}')">
+                        <i class="fas fa-stop mr-2"></i>{{ _('Complete') }}
+                    </button>
+                </form>
+            {% elif campaign.status.value == 'paused' %}
+                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}" 
+                      style="display: inline;">
+                    <button type="submit" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+                        <i class="fas fa-play mr-2"></i>{{ _('Resume') }}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Campaign Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-users text-white"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">{{ _('Total Targets') }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ analytics.total_targets }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-paper-plane text-white"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">{{ _('Emails Sent') }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ analytics.emails_sent }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-eye text-white"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">{{ _('Emails Opened') }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ analytics.emails_opened }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-mouse-pointer text-white"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">{{ _('Links Clicked') }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ analytics.links_clicked }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success and Awareness Rates -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ _('Phishing Success Rate') }}</h3>
+            <div class="flex items-center">
+                <div class="flex-1">
+                    <div class="text-3xl font-bold text-red-600">{{ "%.1f"|format(analytics.success_rate) }}%</div>
+                    <p class="text-sm text-gray-500">{{ _('Employees who clicked the phishing link') }}</p>
+                </div>
+                <div class="w-16 h-16">
+                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" class="text-gray-200"/>
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" 
+                                stroke-dasharray="{{ analytics.success_rate * 0.88 }} 88" class="text-red-600"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ _('Security Awareness Rate') }}</h3>
+            <div class="flex items-center">
+                <div class="flex-1">
+                    <div class="text-3xl font-bold text-green-600">{{ "%.1f"|format(analytics.awareness_rate) }}%</div>
+                    <p class="text-sm text-gray-500">{{ _('Employees who reported the phishing email') }}</p>
+                </div>
+                <div class="w-16 h-16">
+                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" class="text-gray-200"/>
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" fill="none" 
+                                stroke-dasharray="{{ analytics.awareness_rate * 0.88 }} 88" class="text-green-600"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Breakdown -->
+    {% if analytics.department_breakdown %}
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ _('Department Breakdown') }}</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Department') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Total') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Sent') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Opened') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Clicked') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Reported') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Click Rate') }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for dept, stats in analytics.department_breakdown.items() %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ dept }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stats.total }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stats.sent }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stats.opened }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stats.clicked }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ stats.reported }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% set click_rate = (stats.clicked / stats.sent * 100) if stats.sent > 0 else 0 %}
+                            <span class="px-2 py-1 text-xs rounded-full
+                                {% if click_rate > 30 %}bg-red-100 text-red-800
+                                {% elif click_rate > 15 %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-green-100 text-green-800{% endif %}">
+                                {{ "%.1f"|format(click_rate) }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Campaign Timeline -->
+    {% if analytics.timeline %}
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ _('Campaign Timeline') }}</h3>
+        <div class="space-y-4">
+            {% for event in analytics.timeline[:10] %}
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center
+                        {% if event.event_type == 'email_sent' %}bg-blue-100 text-blue-600
+                        {% elif event.event_type == 'email_opened' %}bg-yellow-100 text-yellow-600
+                        {% elif event.event_type == 'link_clicked' %}bg-red-100 text-red-600
+                        {% elif event.event_type == 'email_reported' %}bg-green-100 text-green-600
+                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                        {% if event.event_type == 'email_sent' %}<i class="fas fa-paper-plane text-xs"></i>
+                        {% elif event.event_type == 'email_opened' %}<i class="fas fa-eye text-xs"></i>
+                        {% elif event.event_type == 'link_clicked' %}<i class="fas fa-mouse-pointer text-xs"></i>
+                        {% elif event.event_type == 'email_reported' %}<i class="fas fa-flag text-xs"></i>
+                        {% else %}<i class="fas fa-info text-xs"></i>{% endif %}
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">
+                        {{ event.event_type.replace('_', ' ').title() }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        {{ moment(event.timestamp).format('MMM DD, YYYY HH:mm') }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+{% endblock %}

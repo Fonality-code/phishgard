@@ -1,0 +1,212 @@
+{% extends 'layouts/app.html' %}
+{% set title = _('Campaigns') %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">{{ _('Phishing Campaigns') }}</h1>
+        <a href="{{ url_for('simulation.create_campaign') }}"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+            <i class="fas fa-plus mr-2"></i>{{ _('New Campaign') }}
+        </a>
+    </div>
+
+    {% if campaigns.items %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Campaign') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Status') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Targets') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Progress') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Success Rate') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Created') }}
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Actions') }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for campaign in campaigns.items %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    <a href="{{ url_for('simulation.campaign_detail', id=campaign.id) }}"
+                                        class="hover:text-blue-600">{{ campaign.name }}</a>
+                                </div>
+                                <div class="text-sm text-gray-500">{{ campaign.description or _('No description') }}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium
+                                {% if campaign.status.value == 'running' %}bg-green-100 text-green-800
+                                {% elif campaign.status.value == 'completed' %}bg-blue-100 text-blue-800
+                                {% elif campaign.status.value == 'draft' %}bg-gray-100 text-gray-800
+                                {% elif campaign.status.value == 'paused' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ campaign.status.value.title() }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ campaign.total_targets }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-1">
+                                    <div class="text-sm text-gray-900">
+                                        {{ campaign.emails_sent }}/{{ campaign.total_targets }}
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="bg-blue-600 h-2 rounded-full"
+                                            style="width: {{ (campaign.emails_sent / campaign.total_targets * 100) if campaign.total_targets > 0 else 0 }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-medium
+                                {% if campaign.success_rate > 30 %}text-red-600
+                                {% elif campaign.success_rate > 15 %}text-yellow-600
+                                {% else %}text-green-600{% endif %}">
+                                {{ "%.1f"|format(campaign.success_rate) }}%
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ campaign.created_at.strftime('%b %d, %Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end space-x-2">
+                                <a href="{{ url_for('simulation.campaign_detail', id=campaign.id) }}"
+                                    class="text-blue-600 hover:text-blue-900">{{ _('View') }}</a>
+
+                                {% if campaign.status.value == 'draft' %}
+                                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}"
+                                    style="display: inline;">
+                                    <button type="submit" class="text-green-600 hover:text-green-900">{{ _('Start')
+                                        }}</button>
+                                </form>
+                                {% elif campaign.status.value == 'running' %}
+                                <form method="POST" action="{{ url_for('simulation.pause_campaign', id=campaign.id) }}"
+                                    style="display: inline;">
+                                    <button type="submit" class="text-yellow-600 hover:text-yellow-900">{{ _('Pause')
+                                        }}</button>
+                                </form>
+                                {% elif campaign.status.value == 'paused' %}
+                                <form method="POST" action="{{ url_for('simulation.start_campaign', id=campaign.id) }}"
+                                    style="display: inline;">
+                                    <button type="submit" class="text-green-600 hover:text-green-900">{{ _('Resume')
+                                        }}</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if campaigns.pages > 1 %}
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
+            <div class="flex-1 flex justify-between sm:hidden">
+                {% if campaigns.has_prev %}
+                <a href="{{ url_for('simulation.campaigns', page=campaigns.prev_num) }}"
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    {{ _('Previous') }}
+                </a>
+                {% endif %}
+                {% if campaigns.has_next %}
+                <a href="{{ url_for('simulation.campaigns', page=campaigns.next_num) }}"
+                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    {{ _('Next') }}
+                </a>
+                {% endif %}
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        {{ _('Showing') }}
+                        <span class="font-medium">{{ campaigns.per_page * (campaigns.page - 1) + 1 }}</span>
+                        {{ _('to') }}
+                        <span class="font-medium">{{ campaigns.per_page * (campaigns.page - 1) + campaigns.items|length
+                            }}</span>
+                        {{ _('of') }}
+                        <span class="font-medium">{{ campaigns.total }}</span>
+                        {{ _('results') }}
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                        {% if campaigns.has_prev %}
+                        <a href="{{ url_for('simulation.campaigns', page=campaigns.prev_num) }}"
+                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+
+                        {% for page in campaigns.iter_pages() %}
+                        {% if page %}
+                        {% if page != campaigns.page %}
+                        <a href="{{ url_for('simulation.campaigns', page=page) }}"
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            {{ page }}
+                        </a>
+                        {% else %}
+                        <span
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">
+                            {{ page }}
+                        </span>
+                        {% endif %}
+                        {% else %}
+                        <span
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                            ...
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if campaigns.has_next %}
+                        <a href="{{ url_for('simulation.campaigns', page=campaigns.next_num) }}"
+                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-envelope text-gray-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ _('No campaigns yet') }}</h3>
+        <p class="text-gray-500 mb-6">{{ _('Start by creating your first phishing simulation campaign.') }}</p>
+        <a href="{{ url_for('simulation.create_campaign') }}"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors inline-flex items-center">
+            <i class="fas fa-plus mr-2"></i>{{ _('Create First Campaign') }}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

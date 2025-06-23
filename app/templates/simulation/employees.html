@@ -1,0 +1,223 @@
+{% extends 'layouts/app.html' %}
+{% set title = _('Employees') %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">{{ _('Employee Management') }}</h1>
+        <div class="flex space-x-3">
+            <a href="{{ url_for('simulation.bulk_upload_employees') }}"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                <i class="fas fa-upload mr-2"></i>{{ _('Bulk Upload') }}
+            </a>
+            <a href="{{ url_for('simulation.create_employee') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                <i class="fas fa-plus mr-2"></i>{{ _('Add Employee') }}
+            </a>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="mb-6">
+        <form method="GET" class="flex items-center space-x-4">
+            <div class="flex-1">
+                <input type="text" name="search" value="{{ search }}" placeholder="{{ _('Search employees...') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <button type="submit"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
+                <i class="fas fa-search"></i>
+            </button>
+            {% if search %}
+            <a href="{{ url_for('simulation.employees') }}" class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-times"></i> {{ _('Clear') }}
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if employees.items %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Employee') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Department') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Position') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Employee ID') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Status') }}
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Added') }}
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {{ _('Actions') }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for employee in employees.items %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-700">
+                                            {{ employee.first_name[0] }}{{ employee.last_name[0] }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ employee.full_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ employee.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ employee.department or '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ employee.position or '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ employee.employee_id or '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium
+                                {% if employee.is_active %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {% if employee.is_active %}{{ _('Active') }}{% else %}{{ _('Inactive') }}{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ employee.created_at.strftime('%b %d, %Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end space-x-2">
+                                <a href="#" class="text-blue-600 hover:text-blue-900">{{ _('Edit') }}</a>
+                                <a href="#" class="text-red-600 hover:text-red-900">{{ _('Delete') }}</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if employees.pages > 1 %}
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
+            <div class="flex-1 flex justify-between sm:hidden">
+                {% if employees.has_prev %}
+                <a href="{{ url_for('simulation.employees', page=employees.prev_num, search=search) }}"
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    {{ _('Previous') }}
+                </a>
+                {% endif %}
+                {% if employees.has_next %}
+                <a href="{{ url_for('simulation.employees', page=employees.next_num, search=search) }}"
+                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    {{ _('Next') }}
+                </a>
+                {% endif %}
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        {{ _('Showing') }}
+                        <span class="font-medium">{{ employees.per_page * (employees.page - 1) + 1 }}</span>
+                        {{ _('to') }}
+                        <span class="font-medium">{{ employees.per_page * (employees.page - 1) + employees.items|length
+                            }}</span>
+                        {{ _('of') }}
+                        <span class="font-medium">{{ employees.total }}</span>
+                        {{ _('results') }}
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                        {% if employees.has_prev %}
+                        <a href="{{ url_for('simulation.employees', page=employees.prev_num, search=search) }}"
+                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+
+                        {% for page in employees.iter_pages() %}
+                        {% if page %}
+                        {% if page != employees.page %}
+                        <a href="{{ url_for('simulation.employees', page=page, search=search) }}"
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            {{ page }}
+                        </a>
+                        {% else %}
+                        <span
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">
+                            {{ page }}
+                        </span>
+                        {% endif %}
+                        {% else %}
+                        <span
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                            ...
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if employees.has_next %}
+                        <a href="{{ url_for('simulation.employees', page=employees.next_num, search=search) }}"
+                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-users text-gray-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+            {% if search %}
+            {{ _('No employees found') }}
+            {% else %}
+            {{ _('No employees yet') }}
+            {% endif %}
+        </h3>
+        <p class="text-gray-500 mb-6">
+            {% if search %}
+            {{ _('Try adjusting your search terms.') }}
+            {% else %}
+            {{ _('Add employees to start creating phishing campaigns.') }}
+            {% endif %}
+        </p>
+        {% if not search %}
+        <div class="flex justify-center space-x-4">
+            <a href="{{ url_for('simulation.create_employee') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors inline-flex items-center">
+                <i class="fas fa-plus mr-2"></i>{{ _('Add Employee') }}
+            </a>
+            <a href="{{ url_for('simulation.bulk_upload_employees') }}"
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md transition-colors inline-flex items-center">
+                <i class="fas fa-upload mr-2"></i>{{ _('Bulk Upload') }}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

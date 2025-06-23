@@ -2,7 +2,8 @@
 <nav class="border-r border-secondary-100/60 py-6 px-2" x-data="{
     accountOpen: true,
     settingsOpen: false,
-    adminOpen: false
+    adminOpen: false,
+    simulationOpen: {{ 'true' if request.blueprint == 'simulation' else 'false' }}
 }">
     {% if current_user.is_authenticated %}
 
@@ -16,6 +17,66 @@
         </div>
         <span class="ml-3">{{ _('Dashboard') }}</span>
     </a>
+
+    <!-- Phishing Simulation Dropdown -->
+    <div class="mt-4">
+        <button @click="simulationOpen = !simulationOpen"
+            class="group flex items-center justify-between w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 {% if request.blueprint == 'simulation' %}bg-gradient-to-r from-red-500 to-red-600 text-white shadow-medium transform scale-105{% else %}text-red-700 hover:bg-red-50 hover:text-red-900{% endif %}">
+            <div class="flex items-center">
+                <div
+                    class="flex items-center justify-center w-8 h-8 rounded-md {% if request.blueprint == 'simulation' %}bg-white/20{% else %}bg-red-100 group-hover:bg-red-200{% endif %} transition-all duration-200">
+                    <i
+                        class="fas fa-shield-alt text-sm {% if request.blueprint == 'simulation' %}text-white{% else %}text-red-600{% endif %}"></i>
+                </div>
+                <span class="ml-3">{{ _('Phishing Simulation') }}</span>
+            </div>
+            <i class="fas fa-chevron-down text-xs transition-transform duration-200 {% if request.blueprint == 'simulation' %}text-white{% else %}text-red-600{% endif %}"
+                :class="{ 'rotate-180': simulationOpen }"></i>
+        </button>
+
+        <div x-show="simulationOpen" x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 transform -translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-2" class="mt-2 ml-4 space-y-1">
+
+            <a href="{{ url_for('simulation.dashboard') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint == 'simulation.dashboard' %}bg-red-100 text-red-900 border-l-4 border-red-500{% else %}text-red-700 hover:bg-red-50 hover:text-red-900 border-l-4 border-transparent hover:border-red-300{% endif %}">
+                <i
+                    class="fas fa-tachometer-alt text-xs mr-3 {% if request.endpoint == 'simulation.dashboard' %}text-red-600{% else %}text-red-500{% endif %}"></i>
+                <span>{{ _('Overview') }}</span>
+            </a>
+
+            <a href="{{ url_for('simulation.campaigns') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint in ['simulation.campaigns', 'simulation.create_campaign', 'simulation.campaign_detail'] %}bg-red-100 text-red-900 border-l-4 border-red-500{% else %}text-red-700 hover:bg-red-50 hover:text-red-900 border-l-4 border-transparent hover:border-red-300{% endif %}">
+                <i
+                    class="fas fa-bullhorn text-xs mr-3 {% if request.endpoint in ['simulation.campaigns', 'simulation.create_campaign', 'simulation.campaign_detail'] %}text-red-600{% else %}text-red-500{% endif %}"></i>
+                <span>{{ _('Campaigns') }}</span>
+            </a>
+
+            <a href="{{ url_for('simulation.email_templates') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint in ['simulation.email_templates', 'simulation.create_email_template'] %}bg-red-100 text-red-900 border-l-4 border-red-500{% else %}text-red-700 hover:bg-red-50 hover:text-red-900 border-l-4 border-transparent hover:border-red-300{% endif %}">
+                <i
+                    class="fas fa-envelope text-xs mr-3 {% if request.endpoint in ['simulation.email_templates', 'simulation.create_email_template'] %}text-red-600{% else %}text-red-500{% endif %}"></i>
+                <span>{{ _('Email Templates') }}</span>
+            </a>
+
+            <a href="{{ url_for('simulation.employees') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint in ['simulation.employees', 'simulation.create_employee', 'simulation.bulk_upload_employees'] %}bg-red-100 text-red-900 border-l-4 border-red-500{% else %}text-red-700 hover:bg-red-50 hover:text-red-900 border-l-4 border-transparent hover:border-red-300{% endif %}">
+                <i
+                    class="fas fa-users text-xs mr-3 {% if request.endpoint in ['simulation.employees', 'simulation.create_employee', 'simulation.bulk_upload_employees'] %}text-red-600{% else %}text-red-500{% endif %}"></i>
+                <span>{{ _('Employees') }}</span>
+            </a>
+
+            <a href="{{ url_for('simulation.training_modules') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint in ['simulation.training_modules', 'simulation.training_module_detail'] %}bg-red-100 text-red-900 border-l-4 border-red-500{% else %}text-red-700 hover:bg-red-50 hover:text-red-900 border-l-4 border-transparent hover:border-red-300{% endif %}">
+                <i
+                    class="fas fa-graduation-cap text-xs mr-3 {% if request.endpoint in ['simulation.training_modules', 'simulation.training_module_detail'] %}text-red-600{% else %}text-red-500{% endif %}"></i>
+                <span>{{ _('Training') }}</span>
+            </a>
+        </div>
+    </div>
 
     <!-- Account Management Dropdown -->
     <div class="mt-6">

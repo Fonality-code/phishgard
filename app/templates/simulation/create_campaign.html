@@ -1,0 +1,179 @@
+{% extends 'layouts/app.html' %}
+{% set title = _('Create Campaign') %}
+
+{% block page_content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex items-center mb-8">
+        <a href="{{ url_for('simulation.campaigns') }}" 
+           class="text-blue-600 hover:text-blue-800 mr-4">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">{{ _('Create New Campaign') }}</h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+
+            <!-- Campaign Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    {{ form.name.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.name(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.name.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {{ form.email_template_id.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.email_template_id(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.email_template_id.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.email_template_id.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">
+                        <a href="{{ url_for('simulation.create_email_template') }}" 
+                           class="text-blue-600 hover:text-blue-800">{{ _('Create new template') }}</a>
+                    </p>
+                </div>
+            </div>
+
+            <div>
+                {{ form.description.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                {{ form.description(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent", rows="3") }}
+                {% if form.description.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.description.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Target Selection -->
+            <div>
+                {{ form.employee_ids.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                <div class="border border-gray-300 rounded-md p-4 max-h-64 overflow-y-auto">
+                    {% for value, label in form.employee_ids.choices %}
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" name="employee_ids" value="{{ value }}" 
+                                   id="employee_{{ value }}" class="mr-2">
+                            <label for="employee_{{ value }}" class="text-sm text-gray-700">{{ label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.employee_ids.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.employee_ids.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">
+                    <a href="{{ url_for('simulation.create_employee') }}" 
+                       class="text-blue-600 hover:text-blue-800">{{ _('Add new employee') }}</a>
+                </p>
+            </div>
+
+            <!-- Scheduling -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    {{ form.scheduled_start.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.scheduled_start(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.scheduled_start.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.scheduled_start.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">{{ _('Leave empty to start immediately') }}</p>
+                </div>
+
+                <div>
+                    {{ form.send_interval_minutes.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.send_interval_minutes(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.send_interval_minutes.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.send_interval_minutes.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">{{ _('Minutes between emails (0 = send all at once)') }}</p>
+                </div>
+            </div>
+
+            <!-- Campaign Settings -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-medium text-gray-900">{{ _('Campaign Settings') }}</h3>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        {{ form.track_opens(class="mr-2") }}
+                        {{ form.track_opens.label(class="text-sm text-gray-700") }}
+                    </div>
+                    
+                    <div class="flex items-center">
+                        {{ form.track_clicks(class="mr-2") }}
+                        {{ form.track_clicks.label(class="text-sm text-gray-700") }}
+                    </div>
+                    
+                    <div class="flex items-center">
+                        {{ form.capture_credentials(class="mr-2") }}
+                        {{ form.capture_credentials.label(class="text-sm text-gray-700") }}
+                        <p class="ml-2 text-sm text-gray-500">({{ _('Use with caution') }})</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4 pt-6 border-t">
+                <a href="{{ url_for('simulation.campaigns') }}" 
+                   class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    {{ _('Cancel') }}
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    {{ _('Create Campaign') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Select all/none functionality for employee selection
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[name="employee_ids"]');
+    
+    // Add select all/none buttons
+    const employeeSection = document.querySelector('input[name="employee_ids"]').closest('div').parentElement;
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'flex space-x-2 mb-2';
+    buttonContainer.innerHTML = `
+        <button type="button" id="selectAll" class="text-sm text-blue-600 hover:text-blue-800">{{ _('Select All') }}</button>
+        <button type="button" id="selectNone" class="text-sm text-blue-600 hover:text-blue-800">{{ _('Select None') }}</button>
+    `;
+    
+    const label = employeeSection.querySelector('label');
+    label.parentNode.insertBefore(buttonContainer, label.nextSibling);
+    
+    document.getElementById('selectAll').addEventListener('click', function() {
+        checkboxes.forEach(cb => cb.checked = true);
+    });
+    
+    document.getElementById('selectNone').addEventListener('click', function() {
+        checkboxes.forEach(cb => cb.checked = false);
+    });
+});
+</script>
+{% endblock %}

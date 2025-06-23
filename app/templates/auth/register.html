@@ -1,6 +1,6 @@
 {% extends "layouts/auth.html" %}
 
-{% block title %}{{ _('Create Account - WebApp') }}{% endblock %}
+{% block title %}{{ _('Create Account - PhishGuard') }}{% endblock %}
 
 {% block page_content %}
 <div class="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-primary-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -11,9 +11,10 @@
                 class="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-r from-primary-500 to-accent-500 mb-6">
                 <i class="fas fa-user-plus text-2xl text-white"></i>
             </div>
-            <h1 class="text-4xl font-display font-bold text-secondary-900 mb-4">{{ _('Join Our Community') }}</h1>
+            <h1 class="text-4xl font-display font-bold text-secondary-900 mb-4">{{ _('Create Your PhishGuard Account')
+                }}</h1>
             <p class="text-lg text-secondary-600 max-w-2xl mx-auto mb-6">
-                {{ _('Create your account to unlock powerful features and connect with professionals worldwide.') }}
+                {{ _('Sign up to start protecting your organization from phishing attacks.') }}
             </p>
             <div class="inline-flex items-center space-x-2 text-sm text-secondary-500">
                 <span>{{ _('Already have an account?') }}</span>
@@ -67,14 +68,16 @@
                                 <i class="fas fa-user text-white text-lg"></i>
                             </div>
                             <div>
-                                <h2 class="text-2xl font-display font-bold text-secondary-900">{{ _('Profile Setup') }}</h2>
+                                <h2 class="text-2xl font-display font-bold text-secondary-900">{{ _('Profile Setup') }}
+                                </h2>
                                 <p class="text-secondary-600">{{ _('Tell us about yourself') }}</p>
                             </div>
                         </div>
 
                         <!-- Profile Image Upload -->
                         <div class="mb-8">
-                            <label class="block text-sm font-semibold text-secondary-700 mb-4">{{ _('Profile Picture') }}</label>
+                            <label class="block text-sm font-semibold text-secondary-700 mb-4">{{ _('Profile Picture')
+                                }}</label>
                             <div class="flex items-center space-x-8">
                                 <div class="relative">
                                     <img id="profile-preview"
@@ -286,7 +289,7 @@
                                     <i class="fas fa-exclamation-circle mr-2"></i>{{ _(error) }}
                                 </p>
                                 {% endfor %}
-                                </div>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -315,7 +318,8 @@
                                 <i class="fas fa-cog text-white text-lg"></i>
                             </div>
                             <div>
-                                <h2 class="text-2xl font-display font-bold text-secondary-900">{{ _('Account Settings') }}</h2>
+                                <h2 class="text-2xl font-display font-bold text-secondary-900">{{ _('Account Settings')
+                                    }}</h2>
                                 <p class="text-secondary-600">{{ _('Customize your experience') }}</p>
                             </div>
                         </div>

@@ -1,115 +1,328 @@
-{% extends "layouts/app.html" %}
-
-{% block title %}{{ _('Web App') }}{% endblock %}
+{% if current_user.is_authenticated %}
+{% extends 'layouts/app.html' %}
+{% set title = _('PhishGuard Dashboard') %}
+{% else %}
+{% extends 'layouts/landing.html' %}
+{% set title = _('Welcome to PhishGuard') %}
+{% endif %}
 
 {% block page_content %}
-<div class="max-w-7xl mx-auto">
-    <h1 class="text-4xl font-bold text-gray-900 mb-8">{{ _('Hello World') }}</h1>
+{% if current_user.is_authenticated %}
+<!-- Authenticated User Dashboard -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <h1 class="text-4xl font-bold text-blue-800 mb-8">{{ _('Welcome to PhishGuard') }}</h1>
 
     <div class="grid gap-8">
-        {% if current_user.is_authenticated %}
-        <!-- Dashboard Content -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-4">{{ _('Dashboard') }}</h2>
-            <p class="text-gray-600 mb-6">{{ _('Welcome to your dashboard, {name}!').format(name=current_user.full_name) }}</p>
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">{{ _('Completed Simulations') }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ dashboard_stats.completed_campaigns if
+                            dashboard_stats else 0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">{{ _('In Progress') }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ dashboard_stats.active_campaigns if
+                            dashboard_stats else 0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">{{ _('High Risk Users') }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ dashboard_stats.high_risk_employees if
+                            dashboard_stats else 0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">{{ _('This Month') }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ dashboard_stats.this_month_campaigns if
+                            dashboard_stats else 0 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- User Info Card -->
-            <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ _('Your Account') }}</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <span class="text-sm text-gray-500">{{ _('Account Type') }}</span>
-                        <p class="font-medium text-gray-900">{{ _(current_user.account_type.title()) }}</p>
-                    </div>
-                    <div>
-                        <span class="text-sm text-gray-500">{{ _('Member Since') }}</span>
-                        <p class="font-medium text-gray-900">{{ current_user.created_at.strftime('%B %d, %Y') }}</p>
-                    </div>
-                    {% if current_user.last_login %}
-                    <div>
-                        <span class="text-sm text-gray-500">{{ _('Last Login') }}</span>
-                        <p class="font-medium text-gray-900">{{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}</p>
-                    </div>
-                    {% endif %}
+        <!-- User Impact Summary -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 mb-8">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">{{ _('Your Impact') }}</h2>
+            <p class="text-gray-600 mb-6">{{ _("Welcome back, {name}! Here's your contribution to
+                cybersecurity.").format(name=current_user.full_name) }}</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-blue-600"></div>
+                    <div class="text-sm text-gray-600 mt-1">{{ _('Simulations Launched') }}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-green-600"></div>
+                    <div class="text-sm text-gray-600 mt-1">{{ _('Company Total') }}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <div class="text-3xl font-bold text-purple-600">{{ current_user.created_at.strftime('%Y') }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ _('Member Since') }}</div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
             <div class="bg-gray-50 rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ _('Quick Actions') }}</h3>
                 <div class="flex flex-wrap gap-3">
+                    <a href="{{ url_for('simulation.create_campaign') }}"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                        <i class="fas fa-plus mr-2"></i>{{ _('Launch Simulation') }}
+                    </a>
+                    <a href="{{ url_for('simulation.campaigns') }}"
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                        <i class="fas fa-list mr-2"></i>{{ _('View Simulations') }}
+                    </a>
+                    <a href="{{ url_for('simulation.training_modules') }}"
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                        <i class="fas fa-book mr-2"></i>{{ _('Training Modules') }}
+                    </a>
                     <a href="{{ url_for('auth.profile') }}"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">{{ _('View Profile') }}</a>
-                    <a href="{{ url_for('auth.change_password') }}"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors">{{ _('Change Password') }}</a>
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                        <i class="fas fa-user mr-2"></i>{{ _('View Profile') }}
+                    </a>
                     {% if current_user.has_role('admin') %}
                     <a href="{{ url_for('auth.admin') }}"
-                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors">{{ _('Admin Dashboard') }}</a>
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors inline-flex items-center">
+                        <i class="fas fa-cog mr-2"></i>{{ _('Admin Dashboard') }}
+                    </a>
                     {% endif %}
                 </div>
             </div>
         </div>
-        {% else %}
-        <!-- Welcome Content -->
-        <div class="text-center">
-            <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ _('Welcome to Our Web Application') }}</h2>
-                <p class="text-lg text-gray-600 mb-8">{{ _('This is a template application with user authentication and role-based access control.') }}</p>
-
-                <!-- Features -->
-                <div class="bg-gray-50 rounded-lg p-6 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">{{ _('Features') }}</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('User Registration and Login') }}</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('Role-Based Access Control (RBAC)') }}</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('Relationship-Based Access Control') }}</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('User Profile Management') }}</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('Admin Dashboard') }}</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <span class="text-gray-700">{{ _('Multi-language Support') }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Getting Started -->
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">{{ _('Get Started') }}</h3>
-                    <p class="text-gray-600 mb-6">{{ _('Create an account to access all features:') }}</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ url_for('auth.register') }}"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md font-medium transition-colors">{{ _('Register Now') }}</a>
-                        <a href="{{ url_for('auth.login') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-md font-medium transition-colors">{{ _('Login') }}</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Language Selector -->
-    <div class="mt-12 pt-8 border-t border-gray-200 text-center">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ _('Language') }}</h3>
-        <div class="flex justify-center space-x-4">
-            <a href="?lang=en" class="text-blue-600 hover:text-blue-800 transition-colors">{{ _('English') }}</a>
-            <a href="?lang=fr" class="text-blue-600 hover:text-blue-800 transition-colors">{{ _('Français') }}</a>
-        </div>
     </div>
 </div>
+{% else %}
+<!-- Landing Page for Non-Authenticated Users -->
+<!-- Define CSS Variables for Theming -->
+<style>
+    :root {
+        --primary-blue: #2563eb;
+        --primary-green: #22c55e;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --bg-light: #f9fafb;
+        --white: #ffffff;
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, var(--primary-blue), #1d4ed8);
+        color: var(--white);
+        padding: 1rem 2rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(to right, #1d4ed8, #1e40af);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+        background: var(--white);
+        color: var(--text-dark);
+        padding: 1rem 2rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .section-heading {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+
+    .section-subheading {
+        font-size: 1.125rem;
+        color: var(--text-light);
+        max-width: 48rem;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+        .section-heading {
+            font-size: 3rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                {{ _('Strengthen Your') }}
+                <span class="bg-gradient-to-r from-blue-500 to-green-600 bg-clip-text text-transparent">
+                    {{ _('Cybersecurity') }}
+                </span>
+                <br>{{ _('Together') }}
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+                {{ _('PhishGuard empowers companies to train employees against phishing attacks through simulated
+                campaigns and comprehensive training modules.') }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('auth.register') }}" class="btn-primary" role="button" aria-label="Get Started">
+                    {{ _('Get Started') }}
+                </a>
+                <a href="#features" class="btn-secondary" role="button" aria-label="Learn More">
+                    {{ _('Learn More') }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="section-heading">{{ _('Powerful Features for Cybersecurity Training') }}</h2>
+            <p class="section-subheading">
+                {{ _('Everything you need to simulate phishing attacks, train employees, and enhance your organization’s
+                security posture.') }}
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Simulated Phishing Campaigns -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-envelope text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Simulated Phishing Campaigns') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Launch realistic phishing simulations to test and improve employee awareness.') }}
+                </p>
+            </div>
+            <!-- Employee Training Modules -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-book text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Employee Training Modules') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Provide interactive training to educate employees on recognizing and avoiding phishing
+                    threats.') }}
+                </p>
+            </div>
+            <!-- Detailed Reporting -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-bar text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Detailed Reporting') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Access analytics to track campaign performance and employee progress.') }}
+                </p>
+            </div>
+            <!-- Customizable Templates -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-edit text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Customizable Templates') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Create tailored phishing emails to match real-world threats.') }}
+                </p>
+            </div>
+            <!-- User Management -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-users text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('User Management') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Organize employees into groups for targeted simulations and training.') }}
+                </p>
+            </div>
+            <!-- Role-Based Access -->
+            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-lock text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Role-Based Access') }}</h3>
+                <p class="text-gray-600 text-sm">
+                    {{ _('Control access levels to ensure secure and efficient platform management.') }}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-green-600">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+            {{ _('Ready to Enhance Your Cybersecurity?') }}
+        </h2>
+        <p class="text-lg sm:text-xl text-blue-100 mb-8">
+            {{ _('Join organizations using PhishGuard to protect against phishing threats.') }}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('auth.register') }}" class="btn-primary bg-white text-blue-600 hover:bg-gray-100"
+                role="button" aria-label="Sign Up Free">
+                {{ _('Sign Up Free') }}
+            </a>
+            <a href="{{ url_for('auth.login') }}"
+                class="btn-secondary bg-transparent text-white border-white hover:bg-white/10" role="button"
+                aria-label="Login">
+                {{ _('Already a Member? Login') }}
+            </a>
+        </div>
+    </div>
+</section>
+
+
+{% endif %}
 {% endblock %}

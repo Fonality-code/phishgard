@@ -1,0 +1,108 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Bulk Upload Employees - PhishGuard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Bulk Upload Employees</h1>
+                <a href="{{ url_for('simulation.employees') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Employees
+                </a>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Upload CSV File</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+
+                                <div class="mb-3">
+                                    {{ form.csv_file.label(class="form-label") }}
+                                    {{ form.csv_file(class="form-control") }}
+                                    {% if form.csv_file.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.csv_file.errors %}
+                                        <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Upload a CSV file with employee information. Maximum file size: 5MB.
+                                    </div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-upload"></i> Upload Employees
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">CSV Format Requirements</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Your CSV file should include the following columns:</p>
+                            <ul class="list-unstyled">
+                                <li><strong>email</strong> <span class="text-danger">*</span> - Employee email address
+                                </li>
+                                <li><strong>first_name</strong> <span class="text-danger">*</span> - First name</li>
+                                <li><strong>last_name</strong> <span class="text-danger">*</span> - Last name</li>
+                                <li><strong>department</strong> - Department name</li>
+                                <li><strong>position</strong> - Job title/position</li>
+                                <li><strong>employee_id</strong> - Employee ID number</li>
+                            </ul>
+                            <small class="text-muted">* Required fields</small>
+
+                            <hr>
+
+                            <h6>Sample CSV Format:</h6>
+                            <div class="bg-light p-2 rounded">
+                                <small class="font-monospace">
+                                    email,first_name,last_name,department,position,employee_id<br>
+                                    john.doe@example.com,John,Doe,IT,Developer,E001<br>
+                                    jane.smith@example.com,Jane,Smith,HR,Manager,E002
+                                </small>
+                            </div>
+
+                            <div class="mt-3">
+                                <a href="data:text/csv;charset=utf-8,email%2Cfirst_name%2Clast_name%2Cdepartment%2Cposition%2Cemployee_id%0Ajohn.doe%40example.com%2CJohn%2CDoe%2CIT%2CDeveloper%2CE001%0Ajane.smith%40example.com%2CJane%2CSmith%2CHR%2CManager%2CE002"
+                                    download="employee_template.csv" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download"></i> Download Template
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Import Notes</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="small text-muted">
+                                <li>Duplicate email addresses will be skipped</li>
+                                <li>Invalid email formats will be rejected</li>
+                                <li>Empty required fields will cause row rejection</li>
+                                <li>Import results will be displayed after processing</li>
+                                <li>Maximum 1000 employees per upload</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

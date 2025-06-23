@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification - {{ config.APP_NAME }}</title>
+    <title>Email Verification - PhishGuard</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -13,6 +14,7 @@
             margin: 0;
             padding: 0;
         }
+
         .email-container {
             max-width: 600px;
             margin: 0 auto;
@@ -21,36 +23,43 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
         .email-header {
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
             padding: 40px 30px;
             text-align: center;
         }
+
         .email-header h1 {
             color: #ffffff;
             margin: 0;
             font-size: 28px;
             font-weight: 700;
         }
+
         .email-header p {
             color: #e2e8f0;
             margin: 8px 0 0 0;
             font-size: 16px;
         }
+
         .email-body {
             padding: 40px 30px;
         }
+
         .greeting {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 20px;
             color: #1e293b;
         }
+
         .message {
             font-size: 16px;
             margin-bottom: 30px;
             color: #475569;
         }
+
         .verify-button {
             display: inline-block;
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
@@ -64,13 +73,16 @@
             margin: 20px 0;
             transition: transform 0.2s ease;
         }
+
         .verify-button:hover {
             transform: translateY(-1px);
         }
+
         .button-container {
             text-align: center;
             margin: 30px 0;
         }
+
         .security-note {
             background-color: #fef3c7;
             border-left: 4px solid #f59e0b;
@@ -78,26 +90,31 @@
             margin: 30px 0;
             border-radius: 0 8px 8px 0;
         }
+
         .security-note p {
             margin: 0;
             font-size: 14px;
             color: #92400e;
         }
+
         .footer {
             background-color: #f1f5f9;
             padding: 30px;
             text-align: center;
             border-top: 1px solid #e2e8f0;
         }
+
         .footer p {
             margin: 0;
             font-size: 14px;
             color: #64748b;
         }
+
         .footer a {
             color: #3b82f6;
             text-decoration: none;
         }
+
         .link-fallback {
             background-color: #f8fafc;
             padding: 20px;
@@ -105,11 +122,13 @@
             margin-top: 20px;
             border: 1px solid #e2e8f0;
         }
+
         .link-fallback p {
             margin: 0 0 10px 0;
             font-size: 14px;
             color: #64748b;
         }
+
         .link-fallback code {
             background-color: #e2e8f0;
             padding: 8px;
@@ -119,17 +138,23 @@
             display: block;
             color: #475569;
         }
+
         @media (max-width: 600px) {
             .email-container {
                 margin: 10px;
                 border-radius: 8px;
             }
-            .email-header, .email-body, .footer {
+
+            .email-header,
+            .email-body,
+            .footer {
                 padding: 20px;
             }
+
             .email-header h1 {
                 font-size: 24px;
             }
+
             .verify-button {
                 display: block;
                 text-align: center;
@@ -137,49 +162,52 @@
         }
     </style>
 </head>
+
 <body>
     <div class="email-container">
         <!-- Header -->
         <div class="email-header">
-            <h1>{{ config.APP_NAME }}</h1>
-            <p>Email Verification Required</p>
+            <h1>{{ _('Verify Your Email Address') }}</h1>
+            <p>{{ _('To secure your PhishGuard account') }}</p>
         </div>
 
         <!-- Body -->
         <div class="email-body">
-            <div class="greeting">
-                Hello {{ user.first_name or user.username }}! 👋
-            </div>
-
-            <div class="message">
-                <p>Thank you for registering with <strong>{{ config.APP_NAME }}</strong>!</p>
-                <p>To complete your account setup and start using all our features, please verify your email address by clicking the button below:</p>
-            </div>
+            <p class="greeting">{{ _('Hello {user_name},').format(user_name=user.first_name) }}</p>
+            <p class="message">
+                {{ _('Thank you for registering with PhishGuard. Please click the button below to verify your email
+                address and activate your account.') }}
+            </p>
 
             <div class="button-container">
-                <a href="{{ verification_url }}" class="verify-button">
-                    Verify My Email Address
-                </a>
+                <a href="{{ verification_url }}" class="verify-button">{{ _('Verify Email Address') }}</a>
             </div>
+
+            <p class="message link-fallback">
+                {{ _('If you are having trouble clicking the button, copy and paste the URL below into your web
+                browser:') }}<br>
+                <a href="{{ verification_url }}">{{ verification_url }}</a>
+            </p>
 
             <div class="security-note">
-                <p><strong>🔒 Security Notice:</strong> This verification link will expire in 24 hours for your security. If you did not create an account with us, please ignore this email.</p>
+                <p><strong>{{ _('Security Note:') }}</strong> {{ _('This link will expire in 24 hours. If you did not
+                    request this verification, please disregard this email.') }}</p>
             </div>
 
-            <div class="link-fallback">
-                <p>Having trouble clicking the button? Copy and paste this link into your web browser:</p>
-                <code>{{ verification_url }}</code>
-            </div>
+            <p class="message">
+                {{ _('Thank you,') }}<br>
+                {{ _('The PhishGuard Team') }}
+            </p>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <p>Best regards,<br>The {{ config.APP_NAME }} Team</p>
-            <p style="margin-top: 20px;">
-                <a href="{{ url_for('main.index', _external=True) }}">Visit our website</a> |
-                <a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">Contact Support</a>
+            <p>&copy; {{ now.year }} PhishGuard. {{ _('All rights reserved.') }}</p>
+            <p>
+                <a href="#">{{ _('Privacy Policy') }}</a> | <a href="#">{{ _('Contact Support') }}</a>
             </p>
         </div>
     </div>
 </body>
+
 </html>

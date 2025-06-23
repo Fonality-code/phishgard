@@ -1,0 +1,433 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Create Email Template - PhishGuard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Create Email Template</h1>
+                <a href="{{ url_for('simulation.email_templates') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Templates
+                </a>
+            </div>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Template Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            {{ form.name.label(class="form-label") }}
+                                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else
+                                            "")) }}
+                                            {% if form.name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.name.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            {{ form.category.label(class="form-label") }}
+                                            {{ form.category(class="form-select" + (" is-invalid" if
+                                            form.category.errors else "")) }}
+                                            {% if form.category.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.category.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            {{ form.description.label(class="form-label") }}
+                                            {{ form.description(class="form-control" + (" is-invalid" if
+                                            form.description.errors else ""), rows="3") }}
+                                            {% if form.description.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.description.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            {{ form.difficulty.label(class="form-label") }}
+                                            {{ form.difficulty(class="form-select" + (" is-invalid" if
+                                            form.difficulty.errors else "")) }}
+                                            {% if form.difficulty.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.difficulty.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            <div class="form-text">
+                                                <small>
+                                                    <strong>Low:</strong> Easy to identify as phishing<br>
+                                                    <strong>Medium:</strong> Moderately convincing<br>
+                                                    <strong>High:</strong> Very convincing and sophisticated
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Email Content</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form.sender_name.label(class="form-label") }}
+                                            {{ form.sender_name(class="form-control" + (" is-invalid" if
+                                            form.sender_name.errors else "")) }}
+                                            {% if form.sender_name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.sender_name.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form.sender_email.label(class="form-label") }}
+                                            {{ form.sender_email(class="form-control" + (" is-invalid" if
+                                            form.sender_email.errors else "")) }}
+                                            {% if form.sender_email.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.sender_email.errors %}
+                                                <div>{{ error }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.subject.label(class="form-label") }}
+                                    {{ form.subject(class="form-control" + (" is-invalid" if form.subject.errors else
+                                    "")) }}
+                                    {% if form.subject.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.subject.errors %}
+                                        <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.html_content.label(class="form-label") }}
+                                    {{ form.html_content(class="form-control" + (" is-invalid" if
+                                    form.html_content.errors else ""), rows="15", id="htmlEditor") }}
+                                    {% if form.html_content.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.html_content.errors %}
+                                        <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Use HTML to format your email content. The tracking link will be automatically
+                                        inserted.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.phishing_url.label(class="form-label") }}
+                                    {{ form.phishing_url(class="form-control" + (" is-invalid" if
+                                    form.phishing_url.errors else "")) }}
+                                    {% if form.phishing_url.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.phishing_url.errors %}
+                                        <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        The URL that users will be redirected to when they click the phishing link.
+                                        Leave blank to use the default awareness page.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Template
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="previewTemplate()">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </button>
+                                    <a href="{{ url_for('simulation.email_templates') }}"
+                                        class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">Template Variables</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small text-muted mb-2">You can use these variables in your email content:</p>
+                                <div class="small">
+                                    <div class="mb-2">
+                                        <code>{{employee.first_name}}</code><br>
+                                        <span class="text-muted">Employee's first name</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code>{{employee.last_name}}</code><br>
+                                        <span class="text-muted">Employee's last name</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code>{{employee.email}}</code><br>
+                                        <span class="text-muted">Employee's email address</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code>{{employee.department}}</code><br>
+                                        <span class="text-muted">Employee's department</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code>{{employee.position}}</code><br>
+                                        <span class="text-muted">Employee's position</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code>{{tracking_url}}</code><br>
+                                        <span class="text-muted">Phishing link (auto-generated)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">Template Library</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="loadTemplate('urgent_security')">
+                                        Urgent Security Alert
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="loadTemplate('account_suspension')">
+                                        Account Suspension
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="loadTemplate('password_expiry')">
+                                        Password Expiry
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="loadTemplate('invoice_payment')">
+                                        Invoice Payment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Email Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent">
+                    <!-- Preview content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewTemplate() {
+        const subject = document.getElementById('subject').value;
+        const senderName = document.getElementById('sender_name').value;
+        const senderEmail = document.getElementById('sender_email').value;
+        const htmlContent = document.getElementById('htmlEditor').value;
+
+        document.getElementById('previewContent').innerHTML = `
+        <div class="mb-3">
+            <strong>Subject:</strong> ${subject}
+        </div>
+        <div class="mb-3">
+            <strong>From:</strong> ${senderName} &lt;${senderEmail}&gt;
+        </div>
+        <div class="border rounded p-3">
+            ${htmlContent}
+        </div>
+    `;
+
+        new bootstrap.Modal(document.getElementById('previewModal')).show();
+    }
+
+    function loadTemplate(templateType) {
+        const templates = {
+            'urgent_security': {
+                subject: 'URGENT: Security Breach - Immediate Action Required',
+                content: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background-color: #dc3545; color: white; padding: 15px; text-align: center;">
+                        <h2>SECURITY ALERT</h2>
+                    </div>
+                    <div style="padding: 20px; background-color: #f8f9fa;">
+                        <p>Dear {{employee.first_name}},</p>
+                        <p>We have detected suspicious activity on your account. Your immediate attention is required to secure your account.</p>
+                        <p><strong>Details:</strong></p>
+                        <ul>
+                            <li>Time: Today at 3:47 PM</li>
+                            <li>Location: Unknown IP Address</li>
+                            <li>Action: Login attempt from unauthorized device</li>
+                        </ul>
+                        <p>Please click the link below to verify your account and secure it immediately:</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{{tracking_url}}" style="background-color: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                SECURE MY ACCOUNT NOW
+                            </a>
+                        </div>
+                        <p>If you do not take action within 24 hours, your account will be suspended for security reasons.</p>
+                        <p>Best regards,<br>IT Security Team</p>
+                    </div>
+                </div>
+            `
+            },
+            'account_suspension': {
+                subject: 'Account Suspension Notice - Action Required',
+                content: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background-color: #ffc107; color: black; padding: 15px; text-align: center;">
+                        <h2>ACCOUNT SUSPENSION NOTICE</h2>
+                    </div>
+                    <div style="padding: 20px;">
+                        <p>Dear {{employee.first_name}} {{employee.last_name}},</p>
+                        <p>Your account has been temporarily suspended due to unusual activity detected on {{employee.email}}.</p>
+                        <p><strong>Reason for suspension:</strong> Multiple failed login attempts from different locations</p>
+                        <p>To reactivate your account and restore access to all company systems, please verify your identity by clicking the link below:</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{{tracking_url}}" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                REACTIVATE ACCOUNT
+                            </a>
+                        </div>
+                        <p>This verification link will expire in 2 hours. If you don't verify your account within this time, you will need to contact IT support.</p>
+                        <p>Thank you,<br>IT Support Team</p>
+                    </div>
+                </div>
+            `
+            },
+            'password_expiry': {
+                subject: 'Password Expiry Notification - Update Required',
+                content: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background-color: #17a2b8; color: white; padding: 15px; text-align: center;">
+                        <h2>PASSWORD EXPIRY NOTICE</h2>
+                    </div>
+                    <div style="padding: 20px;">
+                        <p>Hello {{employee.first_name}},</p>
+                        <p>Your password for {{employee.email}} will expire in 3 days. To maintain access to your account and company systems, please update your password before it expires.</p>
+                        <p><strong>Password expires on:</strong> [DATE]</p>
+                        <p>Click the button below to update your password now:</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{{tracking_url}}" style="background-color: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                UPDATE PASSWORD
+                            </a>
+                        </div>
+                        <p><strong>Password Requirements:</strong></p>
+                        <ul>
+                            <li>At least 8 characters long</li>
+                            <li>Include uppercase and lowercase letters</li>
+                            <li>Include at least one number</li>
+                            <li>Include at least one special character</li>
+                        </ul>
+                        <p>If you have any questions, please contact the IT helpdesk.</p>
+                        <p>Best regards,<br>IT Department</p>
+                    </div>
+                </div>
+            `
+            },
+            'invoice_payment': {
+                subject: 'Invoice Payment Required - Ref: INV-{{employee.employee_id}}',
+                content: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background-color: #6f42c1; color: white; padding: 15px; text-align: center;">
+                        <h2>PAYMENT REMINDER</h2>
+                    </div>
+                    <div style="padding: 20px;">
+                        <p>Dear {{employee.first_name}} {{employee.last_name}},</p>
+                        <p>This is a reminder that payment for invoice INV-{{employee.employee_id}} is now overdue.</p>
+                        <p><strong>Invoice Details:</strong></p>
+                        <ul>
+                            <li>Invoice Number: INV-{{employee.employee_id}}</li>
+                            <li>Amount Due: $2,847.50</li>
+                            <li>Due Date: [DATE]</li>
+                            <li>Days Overdue: 15</li>
+                        </ul>
+                        <p>Please process the payment immediately to avoid service disruption and additional fees.</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{{tracking_url}}" style="background-color: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                PAY INVOICE NOW
+                            </a>
+                        </div>
+                        <p>If you have already made the payment, please disregard this notice. If you have any questions about this invoice, please contact our billing department.</p>
+                        <p>Thank you,<br>Accounts Receivable</p>
+                    </div>
+                </div>
+            `
+            }
+        };
+
+        if (templates[templateType]) {
+            document.getElementById('subject').value = templates[templateType].subject;
+            document.getElementById('htmlEditor').value = templates[templateType].content;
+        }
+    }
+</script>
+{% endblock %}
