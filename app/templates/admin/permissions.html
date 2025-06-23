@@ -1,0 +1,200 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Permission Management - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-orange-600 to-accent-600 bg-clip-text text-transparent">
+                    Permission Management
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Create and manage system permissions</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 rounded-lg border {% if category == 'success' %}bg-success-50 text-success-800 border-success-200{% elif category == 'error' %}bg-danger-50 text-danger-800 border-danger-200{% elif category == 'warning' %}bg-warning-50 text-warning-800 border-warning-200{% else %}bg-primary-50 text-primary-800 border-primary-200{% endif %}">
+            <div class="flex items-center">
+                <i
+                    class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Create Permission Form -->
+        <div class="lg:col-span-1">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-plus text-white text-sm"></i>
+                        </div>
+                        Create New Permission
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ url_for('admin.create_permission') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="space-y-4">
+                            <div>
+                                {{ form.name.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.name(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500") }}
+                                <p class="mt-1 text-xs text-slate-500">e.g., user.create, order.read</p>
+                            </div>
+                            <div>
+                                {{ form.description.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.description(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500",
+                                rows="3") }}
+                            </div>
+                            <div>
+                                {{ form.resource.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.resource(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500") }}
+                                <p class="mt-1 text-xs text-slate-500">e.g., user, order, product</p>
+                            </div>
+                            <div>
+                                {{ form.action.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.action(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500") }}
+                            </div>
+                            <div>
+                                {{ form.submit(class="w-full px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white
+                                font-medium rounded-lg transition-all duration-200") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions List -->
+        <div class="lg:col-span-2">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">Existing Permissions</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Permission</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Resource</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Action</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Description</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Created</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            {% for permission in permissions %}
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-key text-white text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-slate-900">{{ permission.name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                        {{ permission.resource }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {% if permission.action == 'create' %}bg-success-100 text-success-800
+                                        {% elif permission.action == 'read' %}bg-primary-100 text-primary-800
+                                        {% elif permission.action == 'update' %}bg-warning-100 text-warning-800
+                                        {% elif permission.action == 'delete' %}bg-danger-100 text-danger-800
+                                        {% else %}bg-slate-100 text-slate-800{% endif %}">
+                                        {{ permission.action.title() }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-slate-900">{{ permission.description or 'No description' }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                    {{ permission.created_at.strftime('%Y-%m-%d') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permission Groups -->
+    <div class="mt-8">
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900">Permissions by Resource</h3>
+            </div>
+            <div class="p-6">
+                {% set resources = permissions | groupby('resource') %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for resource, resource_permissions in resources %}
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h4 class="text-lg font-semibold text-slate-900 mb-3 flex items-center">
+                            <div
+                                class="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded flex items-center justify-center mr-2">
+                                <i class="fas fa-cube text-white text-xs"></i>
+                            </div>
+                            {{ resource.title() }}
+                        </h4>
+                        <div class="space-y-2">
+                            {% for permission in resource_permissions %}
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-700">{{ permission.action.title() }}</span>
+                                <span class="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-800">
+                                    {{ permission.name }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

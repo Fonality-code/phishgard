@@ -1,0 +1,278 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}User Detail - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                    User Detail: {{ user.full_name }}
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Manage user account and permissions</p>
+            </div>
+            <a href="{{ url_for('admin.users') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Users
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 rounded-lg border {% if category == 'success' %}bg-success-50 text-success-800 border-success-200{% elif category == 'error' %}bg-danger-50 text-danger-800 border-danger-200{% elif category == 'warning' %}bg-warning-50 text-warning-800 border-warning-200{% else %}bg-primary-50 text-primary-800 border-primary-200{% endif %}">
+            <div class="flex items-center">
+                <i
+                    class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- User Profile Card -->
+        <div class="lg:col-span-1">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">User Profile</h3>
+                </div>
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        {% if user.profile_image_url %}
+                        <img src="{{ user.profile_image_url }}" alt="{{ user.full_name }}"
+                            class="w-24 h-24 rounded-xl object-cover mx-auto mb-4 border-4 border-slate-200">
+                        {% else %}
+                        <div
+                            class="w-24 h-24 bg-gradient-to-br from-slate-400 to-slate-500 rounded-xl flex items-center justify-center mx-auto mb-4 border-4 border-slate-200">
+                            <i class="fas fa-user text-white text-2xl"></i>
+                        </div>
+                        {% endif %}
+                        <h4 class="text-xl font-semibold text-slate-900">{{ user.full_name }}</h4>
+                        <p class="text-slate-600">{{ user.email }}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">User ID:</span>
+                            <span class="text-sm text-slate-900">{{ user.id }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Account Type:</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if user.account_type == 'business' %}bg-purple-100 text-purple-800
+                                {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                {{ user.account_type.title() }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Status:</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if user.account_status == 'active' %}bg-success-100 text-success-800
+                                {% elif user.account_status == 'inactive' %}bg-slate-100 text-slate-800
+                                {% else %}bg-warning-100 text-warning-800{% endif %}">
+                                {{ user.account_status.title() }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Email Verified:</span>
+                            <span class="text-sm">
+                                {% if user.email_verified %}
+                                <i class="fas fa-check-circle text-success-500"></i> Yes
+                                {% else %}
+                                <i class="fas fa-times-circle text-danger-500"></i> No
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Created:</span>
+                            <span class="text-sm text-slate-900">{{ user.created_at.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        {% if user.last_login %}
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Last Login:</span>
+                            <span class="text-sm text-slate-900">{{ user.last_login.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        {% if user.id != current_user.id %}
+                        <a href="{{ url_for('admin.toggle_user_status', user_id=user.id) }}"
+                            class="w-full inline-flex items-center justify-center px-4 py-2 {% if user.account_status == 'active' %}bg-warning-600 hover:bg-warning-700{% else %}bg-success-600 hover:bg-success-700{% endif %} text-white text-sm font-medium rounded-lg transition-all duration-200 mb-3"
+                            onclick="return confirm('Are you sure you want to {% if user.account_status == 'active' %}deactivate{% else %}activate{% endif %} this user?')">
+                            <i
+                                class="fas fa-{% if user.account_status == 'active' %}pause{% else %}play{% endif %} mr-2"></i>
+                            {% if user.account_status == 'active' %}Deactivate User{% else %}Activate User{% endif %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Forms -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Edit User Form -->
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">Edit User Details</h3>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ url_for('admin.edit_user', user_id=user.id) }}">
+                        {{ form.hidden_tag() }}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                {{ form.first_name.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.first_name(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500") }}
+                            </div>
+                            <div>
+                                {{ form.last_name.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.last_name(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500") }}
+                            </div>
+                            <div class="md:col-span-2">
+                                {{ form.email.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.email(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500") }}
+                            </div>
+                            <div>
+                                {{ form.account_type.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.account_type(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500") }}
+                            </div>
+                            <div>
+                                {{ form.account_status.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.account_status(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500") }}
+                            </div>
+                            <div class="md:col-span-2">
+                                <div class="flex items-center">
+                                    {{ form.email_verified(class="h-4 w-4 text-primary-600 focus:ring-primary-500
+                                    border-slate-300 rounded") }}
+                                    {{ form.email_verified.label(class="ml-2 block text-sm text-slate-700") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            {{ form.submit(class="w-full md:w-auto px-6 py-2 bg-primary-600 hover:bg-primary-700
+                            text-white font-medium rounded-lg transition-all duration-200") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User Roles -->
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">User Roles</h3>
+                </div>
+                <div class="p-6">
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-slate-700 mb-3">Current Roles:</h4>
+                        {% if user_roles %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for role in user_roles %}
+                            <div
+                                class="flex items-center px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm">
+                                <span>{{ role.name }}</span>
+                                <form method="POST"
+                                    action="{{ url_for('admin.remove_role_from_user', user_id=user.id, role_id=role.id) }}"
+                                    class="ml-2">
+                                    <button type="submit" class="text-primary-600 hover:text-primary-800"
+                                        onclick="return confirm('Remove role {{ role.name }} from this user?')">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-slate-500 text-sm">No roles assigned</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-700 mb-3">Assign New Role:</h4>
+                        <form method="POST" action="{{ url_for('admin.assign_role_to_user', user_id=user.id) }}"
+                            class="flex gap-3">
+                            <select name="role_id" required
+                                class="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                                <option value="">Select Role</option>
+                                {% for role in all_roles %}
+                                <option value="{{ role.id }}">{{ role.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit"
+                                class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md transition-all duration-200">
+                                Assign
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Relationships -->
+            {% if parent_relationships or child_relationships %}
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">User Relationships</h3>
+                </div>
+                <div class="p-6">
+                    {% if parent_relationships %}
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-slate-700 mb-3">Reports To:</h4>
+                        <div class="space-y-2">
+                            {% for rel in parent_relationships %}
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <div>
+                                    <span class="font-medium">{{ rel.parent_user.full_name }}</span>
+                                    <span class="text-slate-500 text-sm">({{ rel.relationship_type }})</span>
+                                </div>
+                                <a href="{{ url_for('admin.user_detail', user_id=rel.parent_user_id) }}"
+                                    class="text-primary-600 hover:text-primary-800">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if child_relationships %}
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-700 mb-3">Manages:</h4>
+                        <div class="space-y-2">
+                            {% for rel in child_relationships %}
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <div>
+                                    <span class="font-medium">{{ rel.child_user.full_name }}</span>
+                                    <span class="text-slate-500 text-sm">({{ rel.relationship_type }})</span>
+                                </div>
+                                <a href="{{ url_for('admin.user_detail', user_id=rel.child_user_id) }}"
+                                    class="text-primary-600 hover:text-primary-800">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

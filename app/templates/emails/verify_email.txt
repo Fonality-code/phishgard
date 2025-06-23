@@ -1,0 +1,18 @@
+Hello {{ user.first_name or user.username }},
+
+Thank you for registering with {{ config.APP_NAME }}!
+
+To complete your account setup and verify your email address, please click the link below:
+
+{{ verification_url }}
+
+This verification link will expire in 24 hours for security reasons.
+
+If you did not create an account with us, please ignore this email.
+
+Best regards,
+The {{ config.APP_NAME }} Team
+
+---
+If you're having trouble clicking the link, copy and paste the following URL into your web browser:
+{{ verification_url }}

@@ -1,0 +1,845 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-06-22 17:57+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/base.html:7 app/templates/layouts/auth.html:12
+#: app/templates/main/index.html:3
+msgid "Web App"
+msgstr ""
+
+#: app/templates/auth/admin.html:3
+msgid "Admin Dashboard - Web App"
+msgstr ""
+
+#: app/templates/auth/admin.html:10 app/templates/main/index.html:47
+#: app/templates/main/index.html:81
+msgid "Admin Dashboard"
+msgstr ""
+
+#: app/templates/auth/admin.html:11
+msgid "Manage users and monitor system activity"
+msgstr ""
+
+#: app/templates/auth/admin.html:15
+msgid "Back to Dashboard"
+msgstr ""
+
+#: app/templates/auth/admin.html:46
+msgid "Total Users"
+msgstr ""
+
+#: app/templates/auth/admin.html:57
+msgid "Active Users"
+msgstr ""
+
+#: app/templates/auth/admin.html:69
+msgid "Business Users"
+msgstr ""
+
+#: app/templates/auth/admin.html:81
+msgid "Verified Users"
+msgstr ""
+
+#: app/templates/auth/admin.html:92
+#: app/templates/components/sidebar_nav.html:141
+msgid "User Management"
+msgstr ""
+
+#: app/templates/auth/admin.html:99
+msgid "ID"
+msgstr ""
+
+#: app/templates/auth/admin.html:101
+msgid "Name"
+msgstr ""
+
+#: app/templates/auth/admin.html:103 app/templates/auth/profile.html:149
+msgid "Email"
+msgstr ""
+
+#: app/templates/auth/admin.html:105 app/templates/main/index.html:21
+msgid "Account Type"
+msgstr ""
+
+#: app/templates/auth/admin.html:107
+msgid "Status"
+msgstr ""
+
+#: app/templates/auth/admin.html:109 app/templates/auth/profile.html:84
+msgid "Email Verified"
+msgstr ""
+
+#: app/templates/auth/admin.html:111
+msgid "Created"
+msgstr ""
+
+#: app/templates/auth/admin.html:113
+msgid "Actions"
+msgstr ""
+
+#: app/templates/auth/admin.html:123 app/templates/auth/profile.html:300
+#: app/templates/auth/register.html:49
+#: app/templates/components/sidebar_nav.html:46
+#: app/templates/layouts/app.html:34 app/templates/layouts/app.html:112
+msgid "Profile"
+msgstr ""
+
+#: app/templates/auth/admin.html:150
+msgid "Verified"
+msgstr ""
+
+#: app/templates/auth/admin.html:155 app/templates/auth/profile.html:89
+msgid "Not Verified"
+msgstr ""
+
+#: app/templates/auth/admin.html:165
+msgid "View"
+msgstr ""
+
+#: app/templates/auth/admin.html:171
+msgid "Deactivate"
+msgstr ""
+
+#: app/templates/auth/admin.html:176
+msgid "Activate"
+msgstr ""
+
+#: app/templates/auth/admin.html:192
+msgid "Role Management"
+msgstr ""
+
+#: app/templates/auth/admin.html:196
+msgid "Role management features will be implemented here."
+msgstr ""
+
+#: app/templates/auth/admin.html:200
+msgid "Create new roles"
+msgstr ""
+
+#: app/templates/auth/admin.html:204
+msgid "Assign permissions to roles"
+msgstr ""
+
+#: app/templates/auth/admin.html:208
+msgid "Assign roles to users"
+msgstr ""
+
+#: app/templates/auth/admin.html:212
+msgid "Manage user relationships"
+msgstr ""
+
+#: app/templates/auth/admin.html:223 app/templates/auth/change_password.html:20
+#: app/templates/auth/edit_profile.html:20
+#: app/templates/auth/edit_profile_tabs.html:20
+msgid "Back to Profile"
+msgstr ""
+
+#: app/templates/auth/admin.html:227 app/templates/auth/login.html:110
+msgid "Back to Home"
+msgstr ""
+
+#: app/templates/auth/change_password.html:3
+msgid "Change Password - Web App"
+msgstr ""
+
+#: app/templates/auth/change_password.html:13 app/templates/main/index.html:44
+msgid "Change Password"
+msgstr ""
+
+#: app/templates/auth/change_password.html:15
+msgid "Update your account password for better security"
+msgstr ""
+
+#: app/templates/auth/change_password.html:36
+msgid "Security Settings"
+msgstr ""
+
+#: app/templates/auth/change_password.html:78
+msgid "Password must be at least 8 characters long"
+msgstr ""
+
+#: app/templates/auth/change_password.html:109
+#: app/templates/auth/edit_profile.html:459
+#: app/templates/auth/edit_profile_tabs.html:442
+msgid "Cancel"
+msgstr ""
+
+#: app/templates/auth/change_password.html:114
+msgid "Update Password"
+msgstr ""
+
+#: app/templates/auth/change_password.html:126
+msgid "Password Requirements"
+msgstr ""
+
+#: app/templates/auth/change_password.html:131
+#: app/templates/auth/register.html:528
+msgid "At least 8 characters long"
+msgstr ""
+
+#: app/templates/auth/change_password.html:135
+msgid "Mix of uppercase and lowercase letters recommended"
+msgstr ""
+
+#: app/templates/auth/change_password.html:139
+msgid "Include numbers and special characters for better security"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:3
+#: app/templates/auth/edit_profile_tabs.html:3
+msgid "Edit Profile - Web App"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:13
+#: app/templates/auth/edit_profile_tabs.html:13
+#: app/templates/auth/profile.html:306
+#: app/templates/components/sidebar_nav.html:53
+msgid "Edit Profile"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:15
+#: app/templates/auth/edit_profile_tabs.html:15
+msgid "Update your account information and settings"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:34
+#: app/templates/auth/edit_profile_tabs.html:33
+msgid "Profile & Image"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:39
+#: app/templates/auth/edit_profile_tabs.html:38
+msgid "Personal Info"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:44
+#: app/templates/auth/edit_profile.html:257
+#: app/templates/auth/edit_profile_tabs.html:43
+#: app/templates/auth/edit_profile_tabs.html:240
+#: app/templates/auth/profile.html:175 app/templates/auth/register.html:50
+#: app/templates/auth/register.html:233
+msgid "Location"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:49
+#: app/templates/auth/edit_profile_tabs.html:48
+#: app/templates/auth/profile.html:294 app/templates/auth/register.html:51
+#: app/templates/components/sidebar_nav.html:29
+msgid "Account"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:54
+#: app/templates/auth/edit_profile_tabs.html:53
+msgid "Business"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:63
+msgid "📸 Profile & Image"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:64
+msgid "👤 Personal Info"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:65
+msgid "📍 Location"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:66
+msgid "⚙️ Account"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:67
+msgid "🏢 Business"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:84
+#: app/templates/auth/edit_profile_tabs.html:69
+msgid "Profile Image"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:91
+#: app/templates/auth/edit_profile_tabs.html:76
+msgid "Current Profile Picture"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:108
+#: app/templates/auth/edit_profile_tabs.html:92
+msgid "Upload New Image"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:125
+#: app/templates/auth/edit_profile_tabs.html:109
+msgid "Supported formats: JPG, JPEG, PNG, GIF, WebP (max 5MB)"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:136
+#: app/templates/auth/edit_profile_tabs.html:120
+msgid "Remove current profile image"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:143
+#: app/templates/auth/edit_profile_tabs.html:127
+msgid "New Image Preview"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:162
+#: app/templates/auth/edit_profile_tabs.html:145
+#: app/templates/auth/profile.html:141
+msgid "Personal Information"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:329
+#: app/templates/auth/edit_profile_tabs.html:312
+#: app/templates/auth/register.html:318
+msgid "Account Settings"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:364
+#: app/templates/auth/edit_profile_tabs.html:347
+#: app/templates/auth/profile.html:204
+msgid "Business Information"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:366
+#: app/templates/auth/edit_profile_tabs.html:349
+msgid "(Optional)"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:419
+#: app/templates/auth/edit_profile_tabs.html:402
+msgid "https://www.example.com"
+msgstr ""
+
+#: app/templates/auth/edit_profile.html:464
+#: app/templates/auth/edit_profile_tabs.html:447
+msgid "Save Changes"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:3
+msgid "Verification Failed - Web App"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:19
+msgid "Verification Failed"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:23
+msgid ""
+"The email verification link is invalid or has expired. Please request a "
+"new verification email."
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:34
+msgid "Verification links expire after 24 hours"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:37
+msgid "For security reasons, each link can only be used once"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:49
+msgid "Send New Verification Email"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:55
+msgid "Sign In"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:62
+msgid "Go to Homepage"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:68
+msgid "Troubleshooting"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:72
+msgid "Check your spam/junk folder for the verification email"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:76
+msgid "Make sure you're using the latest verification email"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:80
+msgid "Copy and paste the full link if clicking doesn't work"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:89
+msgid "Still having trouble?"
+msgstr ""
+
+#: app/templates/auth/email_verification_failed.html:90
+#: app/templates/auth/email_verified.html:82
+msgid "Contact Support"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:3
+msgid "Email Verified - Web App"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:19
+msgid "Email Verified Successfully! 🎉"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:23
+msgid ""
+"Your email address has been verified. You now have full access to all "
+"features and can start using your account."
+msgstr ""
+
+#: app/templates/auth/email_verified.html:37
+msgid "Verified on"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:48 app/templates/main/index.html:42
+msgid "View Profile"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:54
+msgid "Go to Dashboard"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:60
+msgid "What's Next?"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:64
+msgid "Complete your profile information"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:68
+msgid "Explore all available features"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:72
+msgid "Connect with other users"
+msgstr ""
+
+#: app/templates/auth/email_verified.html:81
+msgid "Need help?"
+msgstr ""
+
+#: app/templates/auth/login.html:3
+msgid "Login - Web App"
+msgstr ""
+
+#: app/templates/auth/login.html:15
+msgid "Sign in to your account"
+msgstr ""
+
+#: app/templates/auth/login.html:18
+msgid "Don't have an account?"
+msgstr ""
+
+#: app/templates/auth/login.html:21
+msgid "Sign up here"
+msgstr ""
+
+#: app/templates/auth/login.html:54
+msgid "Enter your email"
+msgstr ""
+
+#: app/templates/auth/login.html:70
+msgid "Enter your password"
+msgstr ""
+
+#: app/templates/auth/login.html:91
+msgid "Forgot password?"
+msgstr ""
+
+#: app/templates/auth/login.html:100
+msgid "Sign in"
+msgstr ""
+
+#: app/templates/auth/profile.html:3
+msgid "User Profile - Web App"
+msgstr ""
+
+#: app/templates/auth/profile.html:16
+msgid "Email Verification Required"
+msgstr ""
+
+#: app/templates/auth/profile.html:17
+msgid ""
+"Please verify your email address to access all features and ensure "
+"account security."
+msgstr ""
+
+#: app/templates/auth/profile.html:24
+msgid "Send Verification Email"
+msgstr ""
+
+#: app/templates/auth/profile.html:42 app/templates/auth/register.html:77
+msgid "Profile Picture"
+msgstr ""
+
+#: app/templates/auth/profile.html:56
+msgid "No Photo"
+msgstr ""
+
+#: app/templates/auth/profile.html:107
+msgid "Active"
+msgstr ""
+
+#: app/templates/auth/profile.html:145
+msgid "Full Name"
+msgstr ""
+
+#: app/templates/auth/profile.html:154
+msgid "Phone"
+msgstr ""
+
+#: app/templates/auth/profile.html:160
+msgid "Date of Birth"
+msgstr ""
+
+#: app/templates/auth/profile.html:179
+msgid "Country"
+msgstr ""
+
+#: app/templates/auth/profile.html:180 app/templates/auth/profile.html:184
+msgid "Not specified"
+msgstr ""
+
+#: app/templates/auth/profile.html:183
+msgid "City"
+msgstr ""
+
+#: app/templates/auth/profile.html:188
+msgid "Address"
+msgstr ""
+
+#: app/templates/auth/profile.html:209
+msgid "Business Name"
+msgstr ""
+
+#: app/templates/auth/profile.html:215
+msgid "Business Type"
+msgstr ""
+
+#: app/templates/auth/profile.html:221
+msgid "Website"
+msgstr ""
+
+#: app/templates/auth/profile.html:228
+msgid "Description"
+msgstr ""
+
+#: app/templates/auth/profile.html:246
+msgid "Quick Stats"
+msgstr ""
+
+#: app/templates/auth/profile.html:250 app/templates/main/index.html:25
+msgid "Member Since"
+msgstr ""
+
+#: app/templates/auth/profile.html:254 app/templates/main/index.html:108
+msgid "Language"
+msgstr ""
+
+#: app/templates/auth/profile.html:259
+msgid "Last Active"
+msgstr ""
+
+#: app/templates/auth/profile.html:273
+msgid "Roles"
+msgstr ""
+
+#: app/templates/auth/profile.html:282
+msgid "No roles assigned"
+msgstr ""
+
+#: app/templates/auth/profile.html:312 app/templates/auth/register.html:52
+#: app/templates/auth/register.html:476
+#: app/templates/components/sidebar_nav.html:60
+msgid "Security"
+msgstr ""
+
+#: app/templates/auth/profile.html:319
+msgid "Verify Email"
+msgstr ""
+
+#: app/templates/auth/register.html:3
+msgid "Create Account - WebApp"
+msgstr ""
+
+#: app/templates/auth/register.html:14
+msgid "Join Our Community"
+msgstr ""
+
+#: app/templates/auth/register.html:16
+msgid ""
+"Create your account to unlock powerful features and connect with "
+"professionals worldwide."
+msgstr ""
+
+#: app/templates/auth/register.html:19
+msgid "Already have an account?"
+msgstr ""
+
+#: app/templates/auth/register.html:22
+msgid "Sign in here"
+msgstr ""
+
+#: app/templates/auth/register.html:70
+msgid "Profile Setup"
+msgstr ""
+
+#: app/templates/auth/register.html:71
+msgid "Tell us about yourself"
+msgstr ""
+
+#: app/templates/auth/register.html:83 app/templates/auth/register.html:672
+msgid "Profile preview"
+msgstr ""
+
+#: app/templates/auth/register.html:98
+msgid "Choose or drag a photo"
+msgstr ""
+
+#: app/templates/auth/register.html:99
+msgid "PNG, JPG up to 5MB"
+msgstr ""
+
+#: app/templates/auth/register.html:126
+msgid "Enter your first name"
+msgstr ""
+
+#: app/templates/auth/register.html:144
+msgid "Enter your last name"
+msgstr ""
+
+#: app/templates/auth/register.html:162
+msgid "your.email@example.com"
+msgstr ""
+
+#: app/templates/auth/register.html:181
+msgid "+1 (555) 123-4567"
+msgstr ""
+
+#: app/templates/auth/register.html:218 app/templates/auth/register.html:303
+#: app/templates/auth/register.html:461
+msgid "Next"
+msgstr ""
+
+#: app/templates/auth/register.html:234
+msgid "Where are you based?"
+msgstr ""
+
+#: app/templates/auth/register.html:262
+msgid "Enter your city"
+msgstr ""
+
+#: app/templates/auth/register.html:281
+msgid "Street address (optional)"
+msgstr ""
+
+#: app/templates/auth/register.html:299 app/templates/auth/register.html:457
+#: app/templates/auth/register.html:547
+msgid "Previous"
+msgstr ""
+
+#: app/templates/auth/register.html:319
+msgid "Customize your experience"
+msgstr ""
+
+#: app/templates/auth/register.html:368
+msgid "Business Information (Optional)"
+msgstr ""
+
+#: app/templates/auth/register.html:378
+msgid "Your business name"
+msgstr ""
+
+#: app/templates/auth/register.html:416
+msgid "https://yourbusiness.com"
+msgstr ""
+
+#: app/templates/auth/register.html:436
+msgid ""
+"Brief description of your\n"
+"                                    business..."
+msgstr ""
+
+#: app/templates/auth/register.html:477
+msgid "Choose a strong password"
+msgstr ""
+
+#: app/templates/auth/register.html:499
+msgid "Minimum 8 characters with letters and numbers"
+msgstr ""
+
+#: app/templates/auth/register.html:524
+msgid "Password Requirements:"
+msgstr ""
+
+#: app/templates/auth/register.html:532
+msgid "Contains letters and numbers"
+msgstr ""
+
+#: app/templates/auth/register.html:536
+msgid "Special characters recommended"
+msgstr ""
+
+#: app/templates/auth/register.html:552
+msgid "Create Account"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:17
+#: app/templates/components/sidebar_nav.html:134
+#: app/templates/main/index.html:13
+msgid "Dashboard"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:74
+msgid "Settings"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:90
+msgid "Notifications"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:96
+msgid "Appearance"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:102
+msgid "Privacy"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:117
+msgid "Administration"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:148
+msgid "Roles & Permissions"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:155
+msgid "Analytics"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:162
+msgid "System Settings"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:176
+#: app/templates/layouts/auth.html:24
+msgid "Logout"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:189
+msgid "Home"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:199
+#: app/templates/layouts/auth.html:28 app/templates/main/index.html:98
+msgid "Login"
+msgstr ""
+
+#: app/templates/components/sidebar_nav.html:209
+#: app/templates/layouts/auth.html:32
+msgid "Register"
+msgstr ""
+
+#: app/templates/layouts/app.html:17 app/templates/layouts/app.html:72
+#: app/templates/layouts/app.html:96
+msgid "WebApp"
+msgstr ""
+
+#: app/templates/layouts/app.html:18
+msgid "Professional Dashboard"
+msgstr ""
+
+#: app/templates/main/index.html:7
+msgid "Hello World"
+msgstr ""
+
+#: app/templates/main/index.html:14
+#, python-brace-format
+msgid "Welcome to your dashboard, {name}!"
+msgstr ""
+
+#: app/templates/main/index.html:18
+msgid "Your Account"
+msgstr ""
+
+#: app/templates/main/index.html:30
+msgid "Last Login"
+msgstr ""
+
+#: app/templates/main/index.html:39
+msgid "Quick Actions"
+msgstr ""
+
+#: app/templates/main/index.html:56
+msgid "Welcome to Our Web Application"
+msgstr ""
+
+#: app/templates/main/index.html:57
+msgid ""
+"This is a template application with user authentication and role-based "
+"access control."
+msgstr ""
+
+#: app/templates/main/index.html:61
+msgid "Features"
+msgstr ""
+
+#: app/templates/main/index.html:65
+msgid "User Registration and Login"
+msgstr ""
+
+#: app/templates/main/index.html:69
+msgid "Role-Based Access Control (RBAC)"
+msgstr ""
+
+#: app/templates/main/index.html:73
+msgid "Relationship-Based Access Control"
+msgstr ""
+
+#: app/templates/main/index.html:77
+msgid "User Profile Management"
+msgstr ""
+
+#: app/templates/main/index.html:85
+msgid "Multi-language Support"
+msgstr ""
+
+#: app/templates/main/index.html:92
+msgid "Get Started"
+msgstr ""
+
+#: app/templates/main/index.html:93
+msgid "Create an account to access all features:"
+msgstr ""
+
+#: app/templates/main/index.html:96
+msgid "Register Now"
+msgstr ""
+
+#: app/templates/main/index.html:110
+msgid "English"
+msgstr ""
+
+#: app/templates/main/index.html:111
+msgid "Français"
+msgstr ""
+

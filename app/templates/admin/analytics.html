@@ -1,0 +1,300 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Analytics - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-indigo-600 to-accent-600 bg-clip-text text-transparent">
+                    System Analytics
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Insights and reporting dashboard</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- User Registration Trends -->
+    <div class="mb-8">
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    User Registration Trends (Last 30 Days)
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <canvas id="registrationChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <div class="text-2xl font-bold text-indigo-900">
+                                {{ analytics.registrations | sum(attribute='count') }}
+                            </div>
+                            <div class="text-sm text-indigo-700">Total Registrations</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="text-2xl font-bold text-green-900">
+                                {{ (analytics.registrations | sum(attribute='count') / 30) | round(1) }}
+                            </div>
+                            <div class="text-sm text-green-700">Daily Average</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Role Distribution -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-pie-chart text-white text-sm"></i>
+                    </div>
+                    Role Distribution
+                </h3>
+            </div>
+            <div class="p-6">
+                <canvas id="roleChart" width="300" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Account Types -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-users text-white text-sm"></i>
+                    </div>
+                    Account Types
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    {% for account_type, count in analytics.account_types %}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full mr-3
+                                {% if account_type == 'individual' %}bg-blue-500
+                                {% elif account_type == 'business' %}bg-purple-500
+                                {% else %}bg-slate-500{% endif %}">
+                            </div>
+                            <span class="text-sm font-medium text-slate-700">{{ account_type.title() }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-lg font-bold text-slate-900 mr-2">{{ count }}</span>
+                            <span class="text-xs text-slate-500">
+                                ({{ ((count / analytics.account_types | sum(attribute=1)) * 100) | round(1) }}%)
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Status Overview -->
+    <div class="mb-8">
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                    </div>
+                    Account Status Overview
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {% for status, count in analytics.account_statuses %}
+                    <div class="text-center p-6 rounded-lg
+                        {% if status == 'active' %}bg-success-50
+                        {% elif status == 'inactive' %}bg-slate-50
+                        {% else %}bg-warning-50{% endif %}">
+                        <div class="text-3xl font-bold mb-2
+                            {% if status == 'active' %}text-success-900
+                            {% elif status == 'inactive' %}text-slate-900
+                            {% else %}text-warning-900{% endif %}">
+                            {{ count }}
+                        </div>
+                        <div class="text-sm font-medium
+                            {% if status == 'active' %}text-success-700
+                            {% elif status == 'inactive' %}text-slate-700
+                            {% else %}text-warning-700{% endif %}">
+                            {{ status.title() }} Users
+                        </div>
+                        <div class="text-xs mt-1
+                            {% if status == 'active' %}text-success-600
+                            {% elif status == 'inactive' %}text-slate-600
+                            {% else %}text-warning-600{% endif %}">
+                            {{ ((count / analytics.account_statuses | sum(attribute=1)) * 100) | round(1) }}% of total
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6">
+            <div class="flex items-center">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-plus text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <div class="text-2xl font-bold text-slate-900">
+                        {{ analytics.registrations[-7:] | sum(attribute='count') }}
+                    </div>
+                    <div class="text-sm text-slate-600">Last 7 Days</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6">
+            <div class="flex items-center">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <div class="text-2xl font-bold text-slate-900">
+                        {% set last_week = analytics.registrations[-14:-7] | sum(attribute='count') %}
+                        {% set this_week = analytics.registrations[-7:] | sum(attribute='count') %}
+                        {% if last_week > 0 %}
+                        {{ ((this_week - last_week) / last_week * 100) | round(1) }}%
+                        {% else %}
+                        --
+                        {% endif %}
+                    </div>
+                    <div class="text-sm text-slate-600">Growth Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6">
+            <div class="flex items-center">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-tag text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <div class="text-2xl font-bold text-slate-900">
+                        {{ analytics.role_distribution | length }}
+                    </div>
+                    <div class="text-sm text-slate-600">Active Roles</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6">
+            <div class="flex items-center">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-percentage text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <div class="text-2xl font-bold text-slate-900">
+                        {% set total_users = analytics.account_statuses | sum(attribute=1) %}
+                        {% set active_users = analytics.account_statuses | selectattr(0, 'equalto', 'active') |
+                        map(attribute=1) | sum %}
+                        {{ ((active_users / total_users) * 100) | round(1) }}%
+                    </div>
+                    <div class="text-sm text-slate-600">Active Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Registration trend chart
+    const registrationData = {{ analytics.registrations | tojson }};
+    const ctx1 = document.getElementById('registrationChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: registrationData.map(item => item.date),
+            datasets: [{
+                label: 'Daily Registrations',
+                data: registrationData.map(item => item.count),
+                borderColor: 'rgb(99, 102, 241)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Role distribution chart
+    const roleData = {{ analytics.role_distribution | tojson }};
+    const ctx2 = document.getElementById('roleChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: roleData.map(item => item.name),
+            datasets: [{
+                data: roleData.map(item => item.count),
+                backgroundColor: [
+                    'rgb(99, 102, 241)',
+                    'rgb(147, 51, 234)',
+                    'rgb(59, 130, 246)',
+                    'rgb(16, 185, 129)',
+                    'rgb(245, 158, 11)',
+                    'rgb(239, 68, 68)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

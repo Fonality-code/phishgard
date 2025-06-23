@@ -1,0 +1,87 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}{{ _('Email Verified - Web App') }}{% endblock %}
+
+{% block page_content %}
+<div
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Success Card -->
+        <div class="bg-white/95 backdrop-blur-xl border-2 border-white/60 rounded-2xl shadow-2xl p-8 text-center">
+            <!-- Success Icon -->
+            <div
+                class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-success-500 to-success-600 mb-6">
+                <i class="fas fa-check text-white text-2xl"></i>
+            </div>
+
+            <!-- Success Message -->
+            <h1 class="text-2xl font-bold text-slate-900 mb-4">
+                {{ _('Email Verified Successfully! 🎉') }}
+            </h1>
+
+            <p class="text-slate-600 mb-6">
+                {{ _('Your email address has been verified. You now have full access to all features and can start using your account.') }}
+            </p>
+
+            <!-- Success Details -->
+            <div class="bg-success-50 border border-success-200 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-envelope-circle-check text-success-500 text-lg"></i>
+                    </div>
+                    <div class="ml-3 text-left">
+                        <p class="text-sm font-medium text-success-800">
+                            {{ current_user.email }}
+                        </p>
+                        <p class="text-xs text-success-600">
+                            {{ _('Verified on') }} {{ moment().format('MMMM Do, YYYY [at] h:mm A') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="{{ url_for('auth.profile') }}"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                    <i class="fas fa-user mr-2"></i>
+                    {{ _('View Profile') }}
+                </a>
+
+                <a href="{{ url_for('main.index') }}"
+                    class="w-full flex justify-center py-3 px-4 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                    <i class="fas fa-home mr-2"></i>
+                    {{ _('Go to Dashboard') }}
+                </a>
+            </div>
+
+            <!-- Additional Benefits -->
+            <div class="mt-8 text-left">
+                <h3 class="text-sm font-semibold text-slate-900 mb-3">{{ _("What's Next?") }}</h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-success-500 mr-2 text-xs"></i>
+                        {{ _('Complete your profile information') }}
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-success-500 mr-2 text-xs"></i>
+                        {{ _('Explore all available features') }}
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-success-500 mr-2 text-xs"></i>
+                        {{ _('Connect with other users') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center">
+            <p class="text-sm text-slate-500">
+                {{ _('Need help?') }} <a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}"
+                    class="text-primary-600 hover:text-primary-500">{{ _('Contact Support') }}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}{{ _('User Profile - Web App') }}{% endblock %}
+
+{% block page_content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+    <!-- Email Verification Banner -->
+    {% if not current_user.email_verified %}
+    <div class="mb-6 bg-gradient-to-r from-warning-500 to-orange-500 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center text-white">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-2xl mr-3"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg">{{ _('Email Verification Required') }}</h3>
+                    <p class="text-warning-100 text-sm">{{ _('Please verify your email address to access all features and ensure account security.') }}</p>
+                </div>
+            </div>
+            <div class="flex-shrink-0">
+                <a href="{{ url_for('auth.resend_verification') }}"
+                    class="inline-flex items-center px-4 py-2 bg-white text-warning-600 font-medium rounded-lg hover:bg-warning-50 transition-all duration-200 shadow-sm">
+                    <i class="fas fa-envelope mr-2"></i>
+                    {{ _('Send Verification Email') }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Hero Section with Colorful Gradient Background -->
+    <div class="mb-6 md:mb-8">
+        <div
+            class="bg-gradient-to-br from-primary-500 via-accent-400 to-secondary-500 rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-white/95 backdrop-blur-xl border border-white/60 rounded-lg m-1 p-4 sm:p-6 lg:p-8 shadow-lg">
+                <div
+                    class="flex flex-col sm:flex-row lg:flex-row items-center sm:items-start lg:items-center gap-4 sm:gap-6 lg:gap-8">
+                    <!-- Profile Image - Main Focus Element with Enhanced Shadow -->
+                    <div class="flex-shrink-0 relative mx-auto sm:mx-0">
+                        {% if user.profile_image_url %}
+                        <div class="relative">
+                            <img src="{{ user.profile_image_url }}" alt="{{ _('Profile Picture') }}"
+                                class="w-28 h-28 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-xl object-cover border-4 border-white shadow-2xl ring-4 ring-primary-200/50">
+                            <!-- Online Status Indicator -->
+                            <div
+                                class="absolute -bottom-1 -right-1 w-7 h-7 sm:w-6 sm:h-6 lg:w-8 lg:h-8 bg-success-500 rounded-full border-3 border-white flex items-center justify-center shadow-lg">
+                                <i class="fas fa-check text-white text-xs sm:text-xs lg:text-sm"></i>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="relative">
+                            <div
+                                class="w-28 h-28 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-xl bg-gradient-to-br from-primary-100 via-accent-50 to-primary-200 flex items-center justify-center border-4 border-white shadow-2xl ring-4 ring-primary-200/50">
+                                <div class="text-center">
+                                    <i class="fas fa-user text-4xl sm:text-3xl lg:text-4xl text-primary-400 mb-1"></i>
+                                    <p class="text-xs font-medium text-primary-600">{{ _('No Photo') }}</p>
+                                </div>
+                            </div>
+                            <!-- Status Indicator for no profile image -->
+                            <div
+                                class="absolute -bottom-1 -right-1 w-7 h-7 sm:w-6 sm:h-6 lg:w-8 lg:h-8 bg-slate-400 rounded-full border-3 border-white flex items-center justify-center shadow-lg">
+                                <i class="fas fa-camera text-white text-xs sm:text-xs lg:text-sm"></i>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- User Info and Status Badges -->
+                    <div class="flex-1 min-w-0 text-center sm:text-left">
+                        <div class="mb-4 sm:mb-6">
+                            <h1 class="text-2xl sm:text-2xl lg:text-3xl font-display font-bold text-slate-900 mb-2">{{
+                                user.full_name }}</h1>
+                            <p class="text-slate-600 text-base sm:text-lg">{{ user.email }}</p>
+                        </div>
+
+                        <!-- Status Badges Grid - Responsive Design -->
+                        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                            <!-- Email Verification Status -->
+                            <div class="bg-slate-50/80 rounded-lg p-2.5 sm:p-3 text-center">
+                                {% if user.email_verified %}
+                                <div class="text-success-600 mb-1">
+                                    <i class="fas fa-check-circle text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-success-800">{{ _('Email Verified') }}</p>
+                                {% else %}
+                                <div class="text-warning-600 mb-1">
+                                    <i class="fas fa-exclamation-triangle text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-warning-800">{{ _('Not Verified') }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Account Type -->
+                            <div class="bg-slate-50/80 rounded-lg p-2.5 sm:p-3 text-center">
+                                <div class="text-primary-600 mb-1">
+                                    <i class="fas fa-user-tag text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-primary-800">{{ _(user.account_type.title()) }}</p>
+                            </div>
+
+                            <!-- Account Status -->
+                            <div class="bg-slate-50/80 rounded-lg p-2.5 sm:p-3 text-center">
+                                {% if user.account_status == 'active' %}
+                                <div class="text-success-600 mb-1">
+                                    <i class="fas fa-circle text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-success-800">{{ _('Active') }}</p>
+                                {% else %}
+                                <div class="text-danger-600 mb-1">
+                                    <i class="fas fa-circle text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-danger-800">{{ _(user.account_status.title()) }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Member Since -->
+                            <div class="bg-slate-50/80 rounded-lg p-2.5 sm:p-3 text-center">
+                                <div class="text-accent-600 mb-1">
+                                    <i class="fas fa-calendar-alt text-base sm:text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-accent-800">{{ user.created_at.strftime('%b %Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Profile Information -->
+            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+                <!-- Personal Information -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h2
+                        class="text-lg md:text-xl font-semibold text-slate-900 mb-4 md:mb-6 pb-3 border-b border-slate-200 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-sm text-white"></i>
+                        </div>
+                        {{ _('Personal Information') }}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Full Name') }}</label>
+                            <p class="mt-1 text-gray-900 break-words">{{ user.full_name }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Email') }}</label>
+                            <p class="mt-1 text-gray-900 break-all">{{ user.email }}</p>
+                        </div>
+                        {% if user.phone_number %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Phone') }}</label>
+                            <p class="mt-1 text-gray-900">{{ user.phone_number }}</p>
+                        </div>
+                        {% endif %}
+                        {% if user.date_of_birth %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Date of Birth') }}</label>
+                            <p class="mt-1 text-gray-900">{{ user.date_of_birth.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h2
+                        class="text-lg md:text-xl font-semibold text-slate-900 mb-4 md:mb-6 pb-3 border-b border-slate-200 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-accent-500 to-secondary-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-map-marker-alt text-sm text-white"></i>
+                        </div>
+                        {{ _('Location') }}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Country') }}</label>
+                            <p class="mt-1 text-gray-900">{{ user.country or _('Not specified') }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('City') }}</label>
+                            <p class="mt-1 text-gray-900">{{ user.city or _('Not specified') }}</p>
+                        </div>
+                        {% if user.address %}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Address') }}</label>
+                            <p class="mt-1 text-gray-900 break-words">{{ user.address }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.is_business_user %}
+                <!-- Business Information -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h2
+                        class="text-lg md:text-xl font-semibold text-slate-900 mb-4 md:mb-6 pb-3 border-b border-slate-200 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-accent-500 to-primary-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-building text-sm text-white"></i>
+                        </div>
+                        {{ _('Business Information') }}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% if user.business_name %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Business Name') }}</label>
+                            <p class="mt-1 text-gray-900 break-words">{{ user.business_name }}</p>
+                        </div>
+                        {% endif %}
+                        {% if user.business_type %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Business Type') }}</label>
+                            <p class="mt-1 text-gray-900">{{ _(user.business_type.replace('_', ' ').title()) }}</p>
+                        </div>
+                        {% endif %}
+                        {% if user.website_url %}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Website') }}</label>
+                            <a href="{{ user.website_url }}" target="_blank"
+                                class="mt-1 text-primary-600 hover:text-primary-800 transition-colors duration-200 break-all">{{ user.website_url }}</a>
+                        </div>
+                        {% endif %}
+                        {% if user.business_description %}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-500">{{ _('Description') }}</label>
+                            <p class="mt-1 text-gray-900 break-words">{{ user.business_description }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar Content -->
+            <div class="lg:col-span-1 space-y-4 sm:space-y-6">
+                <!-- Quick Stats -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-accent-500 to-warning-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-chart-line text-sm text-white"></i>
+                        </div>
+                        {{ _('Quick Stats') }}
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-slate-50/50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{{ _('Member Since') }}</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ user.created_at.strftime('%B %Y') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50/50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{{ _('Language') }}</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ _(user.preferred_language.title()) }}</span>
+                        </div>
+                        {% if user.last_login %}
+                        <div class="flex items-center justify-between p-3 bg-slate-50/50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{{ _('Last Active') }}</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ user.last_login.strftime('%m/%d/%Y') }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Roles & Permissions -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-secondary-500 to-warning-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-sm text-white"></i>
+                        </div>
+                        {{ _('Roles') }}
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for role in user.roles %}
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                            {{ _(role.name) }}
+                        </span>
+                        {% else %}
+                        <span class="text-slate-500 text-sm italic">{{ _('No roles assigned') }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Account Section -->
+                <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 p-4 md:p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-user-cog text-sm text-white"></i>
+                        </div>
+                        {{ _('Account') }}
+                    </h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{{ url_for('auth.profile') }}"
+                                class="flex items-center px-3 py-2 rounded-md bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium transition-colors">
+                                <i class="fas fa-user mr-2"></i> {{ _('Profile') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('auth.edit_profile') }}"
+                                class="flex items-center px-3 py-2 rounded-md bg-accent-50 hover:bg-accent-100 text-accent-700 font-medium transition-colors">
+                                <i class="fas fa-edit mr-2"></i> {{ _('Edit Profile') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('auth.change_password') }}"
+                                class="flex items-center px-3 py-2 rounded-md bg-warning-50 hover:bg-warning-100 text-warning-700 font-medium transition-colors">
+                                <i class="fas fa-lock mr-2"></i> {{ _('Security') }}
+                            </a>
+                        </li>
+                        {% if not user.email_verified %}
+                        <li>
+                            <a href="{{ url_for('auth.resend_verification') }}"
+                                class="flex items-center px-3 py-2 rounded-md bg-danger-50 hover:bg-danger-100 text-danger-700 font-medium transition-colors">
+                                <i class="fas fa-envelope-open mr-2"></i> {{ _('Verify Email') }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

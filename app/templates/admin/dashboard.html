@@ -1,0 +1,279 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Admin Dashboard - Web App{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-danger-600 to-accent-600 bg-clip-text text-transparent">
+                    Admin Dashboard
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">System overview and administrative controls</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{{ url_for('admin.analytics') }}"
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-all duration-200">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Analytics
+                </a>
+                <a href="{{ url_for('admin.settings') }}"
+                    class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                    <i class="fas fa-cog mr-2"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 rounded-lg border {% if category == 'success' %}bg-success-50 text-success-800 border-success-200{% elif category == 'error' %}bg-danger-50 text-danger-800 border-danger-200{% elif category == 'warning' %}bg-warning-50 text-warning-800 border-warning-200{% else %}bg-primary-50 text-primary-800 border-primary-200{% endif %}">
+            <div class="flex items-center">
+                <i
+                    class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Users -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-white text-lg"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-slate-600">Total Users</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ stats.users.total }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-success-500 to-success-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-user-check text-white text-lg"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-slate-600">Active Users</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ stats.users.active }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified Users -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-slate-600">Verified Users</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ stats.users.verified }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Logins -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-lg"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-slate-600">Recent Logins (24h)</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ stats.users.recent_logins }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RBAC Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Roles -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Total Roles</p>
+                    <p class="text-xl font-bold text-slate-900">{{ stats.rbac.total_roles }}</p>
+                    <p class="text-xs text-slate-500 mt-1">{{ stats.rbac.system_roles }} system, {{
+                        stats.rbac.custom_roles }} custom</p>
+                </div>
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-tag text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Total Permissions</p>
+                    <p class="text-xl font-bold text-slate-900">{{ stats.rbac.total_permissions }}</p>
+                    <p class="text-xs text-slate-500 mt-1">Across all resources</p>
+                </div>
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-key text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relationships -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg p-6 border border-white/50 shadow-soft">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Active Relationships</p>
+                    <p class="text-xl font-bold text-slate-900">{{ stats.rbac.total_relationships }}</p>
+                    <p class="text-xs text-slate-500 mt-1">User connections</p>
+                </div>
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-sitemap text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Recent Users -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-user-plus text-white text-sm"></i>
+                    </div>
+                    Recent Users
+                </h3>
+            </div>
+            <div class="p-6">
+                {% if recent_users %}
+                <div class="space-y-3">
+                    {% for user in recent_users %}
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center">
+                            {% if user.profile_image_url %}
+                            <img src="{{ user.profile_image_url }}" alt="{{ user.full_name }}"
+                                class="w-8 h-8 rounded-lg object-cover mr-3">
+                            {% else %}
+                            <div
+                                class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-white text-xs"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <p class="text-sm font-medium text-slate-900">{{ user.full_name }}</p>
+                                <p class="text-xs text-slate-500">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if user.account_status == 'active' %}bg-success-100 text-success-800
+                                {% elif user.account_status == 'inactive' %}bg-slate-100 text-slate-800
+                                {% else %}bg-warning-100 text-warning-800{% endif %}">
+                                {{ user.account_status.title() }}
+                            </span>
+                            <a href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+                                class="text-primary-600 hover:text-primary-800">
+                                <i class="fas fa-eye text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-slate-500 text-center py-4">No recent users</p>
+                {% endif %}
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('admin.users') }}"
+                        class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                        View All Users →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-secondary-500 to-primary-500 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-bolt text-white text-sm"></i>
+                    </div>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="{{ url_for('admin.users') }}"
+                        class="flex flex-col items-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-all duration-200 group">
+                        <div
+                            class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-users text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-primary-800">Manage Users</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.roles') }}"
+                        class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-200 group">
+                        <div
+                            class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-user-tag text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-purple-800">Manage Roles</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.permissions') }}"
+                        class="flex flex-col items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-200 group">
+                        <div
+                            class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-key text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-orange-800">Permissions</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.relationships') }}"
+                        class="flex flex-col items-center p-4 bg-teal-50 hover:bg-teal-100 rounded-lg transition-all duration-200 group">
+                        <div
+                            class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-sitemap text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-teal-800">Relationships</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

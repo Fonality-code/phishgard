@@ -1,0 +1,166 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Role Management - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-purple-600 to-accent-600 bg-clip-text text-transparent">
+                    Role Management
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Create and manage user roles</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 rounded-lg border {% if category == 'success' %}bg-success-50 text-success-800 border-success-200{% elif category == 'error' %}bg-danger-50 text-danger-800 border-danger-200{% elif category == 'warning' %}bg-warning-50 text-warning-800 border-warning-200{% else %}bg-primary-50 text-primary-800 border-primary-200{% endif %}">
+            <div class="flex items-center">
+                <i
+                    class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Create Role Form -->
+        <div class="lg:col-span-1">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-plus text-white text-sm"></i>
+                        </div>
+                        Create New Role
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ url_for('admin.create_role') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="space-y-4">
+                            <div>
+                                {{ form.name.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.name(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500") }}
+                            </div>
+                            <div>
+                                {{ form.description.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.description(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500",
+                                rows="3") }}
+                            </div>
+                            <div class="flex items-center">
+                                {{ form.is_system(class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300
+                                rounded") }}
+                                {{ form.is_system.label(class="ml-2 block text-sm text-slate-700") }}
+                            </div>
+                            <div>
+                                {{ form.submit(class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white
+                                font-medium rounded-lg transition-all duration-200") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roles List -->
+        <div class="lg:col-span-2">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">Existing Roles</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Name</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Description</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Type</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Created</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            {% for role in roles %}
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-tag text-white text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-slate-900">{{ role.name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-slate-900">{{ role.description or 'No description' }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {% if role.is_system %}bg-orange-100 text-orange-800
+                                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                        {% if role.is_system %}System{% else %}Custom{% endif %}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                    {{ role.created_at.strftime('%Y-%m-%d') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a href="{{ url_for('admin.role_detail', role_id=role.id) }}"
+                                            class="text-purple-600 hover:text-purple-900">
+                                            <i class="fas fa-eye mr-1"></i>View
+                                        </a>
+                                        {% if not role.is_system %}
+                                        <form method="POST" action="{{ url_for('admin.delete_role', role_id=role.id) }}"
+                                            class="inline"
+                                            onsubmit="return confirm('Are you sure you want to delete this role?')">
+                                            <button type="submit" class="text-danger-600 hover:text-danger-900">
+                                                <i class="fas fa-trash mr-1"></i>Delete
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

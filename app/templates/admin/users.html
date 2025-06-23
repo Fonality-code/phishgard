@@ -1,0 +1,220 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}User Management - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                    User Management
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Manage user accounts and permissions</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6 mb-6">
+        <form method="GET" class="flex flex-col lg:flex-row gap-4">
+            <div class="flex-1">
+                <input type="text" name="search" value="{{ search }}" placeholder="Search users by name or email..."
+                    class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <select name="status"
+                    class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if status_filter=='active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if status_filter=='inactive' %}selected{% endif %}>Inactive</option>
+                    <option value="suspended" {% if status_filter=='suspended' %}selected{% endif %}>Suspended</option>
+                </select>
+                <select name="type"
+                    class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">All Types</option>
+                    <option value="individual" {% if type_filter=='individual' %}selected{% endif %}>Individual</option>
+                    <option value="business" {% if type_filter=='business' %}selected{% endif %}>Business</option>
+                </select>
+                <button type="submit"
+                    class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-all duration-200">
+                    <i class="fas fa-search mr-2"></i>Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft p-6 mb-6">
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Bulk Actions</h3>
+        <form method="POST" action="{{ url_for('admin.bulk_actions') }}" class="flex flex-col sm:flex-row gap-4"
+            onsubmit="return confirm('Are you sure you want to execute this bulk action?')">
+            <select name="action" required
+                class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <option value="">Select Action</option>
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+                <option value="suspend">Suspend</option>
+                <option value="delete">Delete</option>
+            </select>
+            <input type="text" name="user_ids" placeholder="User IDs (comma-separated)" required
+                class="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+            <button type="submit"
+                class="px-6 py-2 bg-danger-600 hover:bg-danger-700 text-white font-medium rounded-lg transition-all duration-200">
+                Execute
+            </button>
+        </form>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200">
+            <h3 class="text-lg font-semibold text-slate-900">Users ({{ users.total }} total)</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ID
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Verified</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Created</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-200">
+                    {% for user in users.items %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ user.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                {% if user.profile_image_url %}
+                                <img src="{{ user.profile_image_url }}" alt="{{ user.full_name }}"
+                                    class="w-8 h-8 rounded-lg object-cover mr-3">
+                                {% else %}
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-user text-white text-xs"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="text-sm font-medium text-slate-900">{{ user.full_name }}</div>
+                                    <div class="text-sm text-slate-500">ID: {{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ user.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if user.account_type == 'business' %}bg-purple-100 text-purple-800
+                                {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                {{ user.account_type.title() }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if user.account_status == 'active' %}bg-success-100 text-success-800
+                                {% elif user.account_status == 'inactive' %}bg-slate-100 text-slate-800
+                                {% else %}bg-warning-100 text-warning-800{% endif %}">
+                                {{ user.account_status.title() }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                            {% if user.email_verified %}
+                            <i class="fas fa-check-circle text-success-500"></i>
+                            {% else %}
+                            <i class="fas fa-times-circle text-danger-500"></i>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                            {{ user.created_at.strftime('%Y-%m-%d') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+                                    class="text-primary-600 hover:text-primary-900">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                                {% if user.id != current_user.id %}
+                                <a href="{{ url_for('admin.toggle_user_status', user_id=user.id) }}"
+                                    class="{% if user.account_status == 'active' %}text-warning-600 hover:text-warning-900{% else %}text-success-600 hover:text-success-900{% endif %}"
+                                    onclick="return confirm('Are you sure you want to {% if user.account_status == 'active' %}deactivate{% else %}activate{% endif %} this user?')">
+                                    <i
+                                        class="fas fa-{% if user.account_status == 'active' %}pause{% else %}play{% endif %} mr-1"></i>
+                                    {% if user.account_status == 'active' %}Deactivate{% else %}Activate{% endif %}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if users.pages > 1 %}
+        <div class="px-6 py-4 border-t border-slate-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-slate-700">
+                    Showing {{ users.per_page * (users.page - 1) + 1 }} to
+                    {{ users.per_page * users.page if users.page < users.pages else users.total }} of {{ users.total }}
+                        results </div>
+                        <div class="flex space-x-2">
+                            {% if users.has_prev %}
+                            <a href="{{ url_for('admin.users', page=users.prev_num, search=search, status=status_filter, type=type_filter) }}"
+                                class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50">
+                                Previous
+                            </a>
+                            {% endif %}
+
+                            {% for page_num in users.iter_pages() %}
+                            {% if page_num %}
+                            {% if page_num != users.page %}
+                            <a href="{{ url_for('admin.users', page=page_num, search=search, status=status_filter, type=type_filter) }}"
+                                class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50">
+                                {{ page_num }}
+                            </a>
+                            {% else %}
+                            <span
+                                class="px-3 py-2 text-sm font-medium text-white bg-primary-600 border border-primary-600 rounded-md">
+                                {{ page_num }}
+                            </span>
+                            {% endif %}
+                            {% else %}
+                            <span class="px-3 py-2 text-sm font-medium text-slate-500">...</span>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if users.has_next %}
+                            <a href="{{ url_for('admin.users', page=users.next_num, search=search, status=status_filter, type=type_filter) }}"
+                                class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50">
+                                Next
+                            </a>
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}

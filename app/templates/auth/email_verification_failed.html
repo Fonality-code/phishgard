@@ -1,0 +1,95 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}{{ _('Verification Failed - Web App') }}{% endblock %}
+
+{% block page_content %}
+<div
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-danger-50 via-white to-orange-50 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Error Card -->
+        <div class="bg-white/95 backdrop-blur-xl border-2 border-white/60 rounded-2xl shadow-2xl p-8 text-center">
+            <!-- Error Icon -->
+            <div
+                class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-danger-500 to-danger-600 mb-6">
+                <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+            </div>
+
+            <!-- Error Message -->
+            <h1 class="text-2xl font-bold text-slate-900 mb-4">
+                {{ _('Verification Failed') }}
+            </h1>
+
+            <p class="text-slate-600 mb-6">
+                {{ _(error_message) or _("The email verification link is invalid or has expired. Please request a new verification email.") }}
+            </p>
+
+            <!-- Error Details -->
+            <div class="bg-danger-50 border border-danger-200 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clock text-danger-500 text-lg"></i>
+                    </div>
+                    <div class="ml-3 text-left">
+                        <p class="text-sm font-medium text-danger-800">
+                            {{ _('Verification links expire after 24 hours') }}
+                        </p>
+                        <p class="text-xs text-danger-600">
+                            {{ _('For security reasons, each link can only be used once') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                {% if current_user.is_authenticated and not current_user.email_verified %}
+                <a href="{{ url_for('auth.send_verification_email') }}"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                    <i class="fas fa-envelope mr-2"></i>
+                    {{ _('Send New Verification Email') }}
+                </a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    {{ _('Sign In') }}
+                </a>
+                {% endif %}
+
+                <a href="{{ url_for('main.index') }}"
+                    class="w-full flex justify-center py-3 px-4 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                    <i class="fas fa-home mr-2"></i>
+                    {{ _('Go to Homepage') }}
+                </a>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="mt-8 text-left">
+                <h3 class="text-sm font-semibold text-slate-900 mb-3">{{ _('Troubleshooting') }}</h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start">
+                        <i class="fas fa-lightbulb text-warning-500 mr-2 text-xs mt-0.5 flex-shrink-0"></i>
+                        <span>{{ _('Check your spam/junk folder for the verification email') }}</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-lightbulb text-warning-500 mr-2 text-xs mt-0.5 flex-shrink-0"></i>
+                        <span>{{ _('Make sure you\'re using the latest verification email') }}</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-lightbulb text-warning-500 mr-2 text-xs mt-0.5 flex-shrink-0"></i>
+                        <span>{{ _('Copy and paste the full link if clicking doesn\'t work') }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center">
+            <p class="text-sm text-slate-500">
+                {{ _('Still having trouble?') }} <a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}"
+                    class="text-primary-600 hover:text-primary-500">{{ _('Contact Support') }}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

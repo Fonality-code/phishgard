@@ -1,0 +1,17 @@
+Hello {{ user.first_name or user.username }},
+
+Welcome to {{ config.APP_NAME }}! 🎉
+
+Your account has been successfully created and verified. You can now access all the features of our platform.
+
+Here are some things you can do to get started:
+- Complete your profile information
+- Explore the dashboard
+- Check out our features and tools
+
+If you have any questions or need assistance, feel free to contact our support team.
+
+Best regards,
+The {{ config.APP_NAME }} Team
+
+Visit us at: {{ url_for('main.index', _external=True) }}

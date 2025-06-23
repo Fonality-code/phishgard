@@ -1,0 +1,89 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.pytest_cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.cache
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+instance/site.db
+*.sqlite
+*.db
+migrations/versions/*.py
+!migrations/versions/__init__.py
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Development files
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Static uploads (should be in volumes)
+app/static/uploads/*
+!app/static/uploads/.gitkeep

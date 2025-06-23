@@ -1,0 +1,297 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}User Relationships - Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-teal-600 to-accent-600 bg-clip-text text-transparent">
+                    User Relationships
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">Manage user hierarchies and relationships</p>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div
+            class="p-4 mb-4 rounded-lg border {% if category == 'success' %}bg-success-50 text-success-800 border-success-200{% elif category == 'error' %}bg-danger-50 text-danger-800 border-danger-200{% elif category == 'warning' %}bg-warning-50 text-warning-800 border-warning-200{% else %}bg-primary-50 text-primary-800 border-primary-200{% endif %}">
+            <div class="flex items-center">
+                <i
+                    class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Create Relationship Form -->
+        <div class="lg:col-span-1">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-plus text-white text-sm"></i>
+                        </div>
+                        Create Relationship
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ url_for('admin.create_relationship') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="space-y-4">
+                            <div>
+                                {{ form.parent_user_id.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.parent_user_id(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500") }}
+                                <p class="mt-1 text-xs text-slate-500">Enter the user ID of the parent/manager</p>
+                            </div>
+                            <div>
+                                {{ form.child_user_id.label(class="block text-sm font-medium text-slate-700 mb-2") }}
+                                {{ form.child_user_id(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500") }}
+                                <p class="mt-1 text-xs text-slate-500">Enter the user ID of the child/subordinate</p>
+                            </div>
+                            <div>
+                                {{ form.relationship_type.label(class="block text-sm font-medium text-slate-700 mb-2")
+                                }}
+                                {{ form.relationship_type(class="w-full px-3 py-2 border border-slate-300 rounded-md
+                                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500") }}
+                            </div>
+                            <div>
+                                {{ form.submit(class="w-full px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white
+                                font-medium rounded-lg transition-all duration-200") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User Search Helper -->
+            <div class="mt-6 bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">User Search</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <input type="text" id="user-search" placeholder="Search users by name or email..."
+                            class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <div id="search-results" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relationships List -->
+        <div class="lg:col-span-2">
+            <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900">Active Relationships</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Parent User</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Child User</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Relationship</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Created By</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Created</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            {% for relationship in relationships %}
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        {% if relationship.parent_user.profile_image_url %}
+                                        <img src="{{ relationship.parent_user.profile_image_url }}"
+                                            alt="{{ relationship.parent_user.full_name }}"
+                                            class="w-8 h-8 rounded-lg object-cover mr-3">
+                                        {% else %}
+                                        <div
+                                            class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-500 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-user text-white text-xs"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="text-sm font-medium text-slate-900">{{
+                                                relationship.parent_user.full_name }}</div>
+                                            <div class="text-sm text-slate-500">ID: {{ relationship.parent_user_id }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        {% if relationship.child_user.profile_image_url %}
+                                        <img src="{{ relationship.child_user.profile_image_url }}"
+                                            alt="{{ relationship.child_user.full_name }}"
+                                            class="w-8 h-8 rounded-lg object-cover mr-3">
+                                        {% else %}
+                                        <div
+                                            class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-500 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-user text-white text-xs"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="text-sm font-medium text-slate-900">{{
+                                                relationship.child_user.full_name }}</div>
+                                            <div class="text-sm text-slate-500">ID: {{ relationship.child_user_id }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {% if relationship.relationship_type == 'manager' %}bg-blue-100 text-blue-800
+                                        {% elif relationship.relationship_type == 'parent_company' %}bg-purple-100 text-purple-800
+                                        {% elif relationship.relationship_type == 'team_lead' %}bg-green-100 text-green-800
+                                        {% else %}bg-slate-100 text-slate-800{% endif %}">
+                                        {{ relationship.relationship_type.replace('_', ' ').title() }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                    {{ relationship.creator.full_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                    {{ relationship.created_at.strftime('%Y-%m-%d') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a href="{{ url_for('admin.user_detail', user_id=relationship.parent_user_id) }}"
+                                            class="text-teal-600 hover:text-teal-900">
+                                            <i class="fas fa-user mr-1"></i>Parent
+                                        </a>
+                                        <a href="{{ url_for('admin.user_detail', user_id=relationship.child_user_id) }}"
+                                            class="text-primary-600 hover:text-primary-900">
+                                            <i class="fas fa-user mr-1"></i>Child
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if not relationships %}
+                <div class="p-6 text-center">
+                    <p class="text-slate-500">No active relationships found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Relationship Types Info -->
+    <div class="mt-8">
+        <div class="bg-white/90 backdrop-blur-xl rounded-lg border border-white/50 shadow-soft">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900">Relationship Types</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users text-white"></i>
+                        </div>
+                        <h4 class="font-medium text-blue-900">Manager</h4>
+                        <p class="text-sm text-blue-700 mt-1">Direct management relationship</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        <h4 class="font-medium text-purple-900">Parent Company</h4>
+                        <p class="text-sm text-purple-700 mt-1">Corporate hierarchy relationship</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users-cog text-white"></i>
+                        </div>
+                        <h4 class="font-medium text-green-900">Team Lead</h4>
+                        <p class="text-sm text-green-700 mt-1">Team leadership relationship</p>
+                    </div>
+                    <div class="text-center p-4 bg-slate-50 rounded-lg">
+                        <div class="w-12 h-12 bg-slate-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-user-tie text-white"></i>
+                        </div>
+                        <h4 class="font-medium text-slate-900">Supervisor</h4>
+                        <p class="text-sm text-slate-700 mt-1">General supervision relationship</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // User search functionality
+    document.getElementById('user-search').addEventListener('input', function (e) {
+        const query = e.target.value;
+        if (query.length < 2) {
+            document.getElementById('search-results').innerHTML = '';
+            return;
+        }
+
+        fetch(`{{ url_for('admin.api_user_search') }}?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(users => {
+                const resultsDiv = document.getElementById('search-results');
+                if (users.length === 0) {
+                    resultsDiv.innerHTML = '<p class="text-sm text-slate-500">No users found</p>';
+                    return;
+                }
+
+                resultsDiv.innerHTML = users.map(user => `
+                <div class="flex items-center justify-between p-2 bg-slate-50 rounded cursor-pointer hover:bg-slate-100"
+                     onclick="selectUser(${user.id}, '${user.name}')">
+                    <div>
+                        <div class="text-sm font-medium">${user.name}</div>
+                        <div class="text-xs text-slate-500">${user.email}</div>
+                    </div>
+                    <div class="text-xs text-slate-400">ID: ${user.id}</div>
+                </div>
+            `).join('');
+            })
+            .catch(error => {
+                console.error('Error searching users:', error);
+            });
+    });
+
+    function selectUser(userId, userName) {
+        // You can implement logic to auto-fill the form fields
+        console.log('Selected user:', userId, userName);
+    }
+</script>
+{% endblock %}
