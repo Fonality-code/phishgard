@@ -219,7 +219,7 @@ def assign_training_to_campaign(id):
 
         # Get the training module
         training_module = TrainingModule.query.get_or_404(training_module_id)
-        
+
         if training_module.created_by_id != current_user.id:
             return jsonify({'success': False, 'error': 'Training module not found'})
 
