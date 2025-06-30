@@ -262,7 +262,269 @@
         </div>
     </div>
     {% endif %}
+
+    <!-- Training Assignment Section -->
+    {% if campaign.status.value in ['completed', 'running'] and (failed_employees or training_modules) %}
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">{{ _('Security Training') }}</h3>
+            {% if failed_employees %}
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                {{ failed_employees|length }} {{ _('employees need training') }}
+            </span>
+            {% endif %}
+        </div>
+
+        {% if failed_employees %}
+        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-orange-400"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-medium text-orange-800">
+                        {{ _('Employees Who Clicked the Phishing Link') }}
+                    </h4>
+                    <p class="mt-1 text-sm text-orange-700">
+                        {{ _('These employees clicked the phishing link and may benefit from additional security training.') }}
+                    </p>
+                    <div class="mt-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {% for employee in failed_employees[:9] %}
+                            <div class="text-xs bg-white rounded px-2 py-1 border border-orange-200">
+                                <i class="fas fa-user text-orange-500 mr-1"></i>
+                                {{ employee.full_name }}
+                                {% if employee.department %}
+                                <span class="text-gray-500">({{ employee.department }})</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            {% if failed_employees|length > 9 %}
+                            <div class="text-xs text-orange-600 px-2 py-1">
+                                +{{ failed_employees|length - 9 }} {{ _('more employees') }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if training_modules %}
+        <div class="space-y-4">
+            <h4 class="text-md font-medium text-gray-900">{{ _('Available Training Modules') }}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for module in training_modules[:6] %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                    <div class="flex items-start justify-between mb-2">
+                        <h5 class="text-sm font-medium text-gray-900 truncate">{{ module.title }}</h5>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                            {% if module.difficulty_level == 'beginner' %}bg-green-100 text-green-800
+                            {% elif module.difficulty_level == 'intermediate' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ module.difficulty_level.title() }}
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-600 mb-3">
+                        {{ module.description[:80] }}{% if module.description|length > 80 %}...{% endif %}
+                    </p>
+                    <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+                        <span><i class="fas fa-clock mr-1"></i>{{ module.estimated_duration }} min</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">{{ module.category.replace('_', ' ').title() }}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        {% if failed_employees %}
+                        <button onclick="assignTraining({{ module.id }}, 'failed_only')"
+                            class="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 py-2 rounded transition-colors">
+                            <i class="fas fa-user-graduate mr-1"></i>
+                            {{ _('Assign to Failed') }}
+                        </button>
+                        {% endif %}
+                        <button onclick="assignTraining({{ module.id }}, 'all_targets')"
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded transition-colors">
+                            <i class="fas fa-users mr-1"></i>
+                            {{ _('Assign to All') }}
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if training_modules|length > 6 %}
+            <div class="text-center">
+                <a href="{{ url_for('simulation.training_modules') }}" 
+                   class="text-blue-600 hover:text-blue-800 text-sm">
+                    {{ _('View all') }} {{ training_modules|length }} {{ _('training modules') }} →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-graduation-cap text-gray-300 text-4xl mb-4"></i>
+            <h4 class="text-lg font-medium text-gray-500 mb-2">{{ _('No Training Modules Available') }}</h4>
+            <p class="text-gray-400 mb-4">
+                {{ _('Create training modules to help improve employee cybersecurity awareness.') }}
+            </p>
+            <a href="{{ url_for('simulation.create_training_module') }}"
+               class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg">
+                <i class="fas fa-plus mr-2"></i>{{ _('Create Training Module') }}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Training Assignment Modal -->
+<div id="trainingModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-auto">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h5 class="text-lg font-semibold">{{ _('Assign Training Module') }}</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-700"
+                onclick="closeTrainingModal()">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="px-6 py-4">
+            <form id="trainingAssignmentForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ _('Training Module') }}</label>
+                    <div id="selectedModuleInfo" class="p-3 bg-gray-50 rounded border">
+                        <!-- Module info will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ _('Assignment Target') }}</label>
+                    <div id="assignmentTargetInfo" class="p-3 bg-blue-50 rounded border text-sm">
+                        <!-- Assignment target info will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ _('Due Date (Optional)') }}</label>
+                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           name="due_date" id="trainingDueDate">
+                </div>
+            </form>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-2">
+            <button type="button"
+                class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                onclick="closeTrainingModal()">{{ _('Cancel') }}</button>
+            <button type="button"
+                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                onclick="submitTrainingAssignment()">
+                <i class="fas fa-graduation-cap mr-2"></i>{{ _('Assign Training') }}
+            </button>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script>
+let selectedTrainingModule = null;
+let selectedAssignmentType = null;
+
+function assignTraining(moduleId, assignmentType) {
+    // Find the module data
+    const moduleData = {{ training_modules | tojsonfilter }};
+    selectedTrainingModule = moduleData.find(m => m.id === moduleId);
+    selectedAssignmentType = assignmentType;
+    
+    if (!selectedTrainingModule) {
+        alert('{{ _('Training module not found') }}');
+        return;
+    }
+    
+    // Populate modal with module info
+    document.getElementById('selectedModuleInfo').innerHTML = `
+        <div class="flex items-center justify-between">
+            <div>
+                <h6 class="font-medium text-gray-900">${selectedTrainingModule.title}</h6>
+                <p class="text-sm text-gray-600">${selectedTrainingModule.description || ''}</p>
+                <div class="flex items-center space-x-3 mt-2 text-xs text-gray-500">
+                    <span><i class="fas fa-clock mr-1"></i>${selectedTrainingModule.estimated_duration} min</span>
+                    <span class="px-2 py-1 bg-gray-100 rounded">${selectedTrainingModule.difficulty_level}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Populate assignment target info
+    const failedCount = {{ failed_employees|length }};
+    const totalTargets = {{ campaign.total_targets }};
+    
+    let targetInfo = '';
+    if (assignmentType === 'failed_only') {
+        targetInfo = `
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                <div>
+                    <div class="font-medium text-orange-800">{{ _('Employees who clicked the phishing link') }}</div>
+                    <div class="text-orange-600">${failedCount} {{ _('employees will be assigned this training') }}</div>
+                </div>
+            </div>
+        `;
+    } else {
+        targetInfo = `
+            <div class="flex items-center">
+                <i class="fas fa-users text-blue-500 mr-2"></i>
+                <div>
+                    <div class="font-medium text-blue-800">{{ _('All campaign targets') }}</div>
+                    <div class="text-blue-600">${totalTargets} {{ _('employees will be assigned this training') }}</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('assignmentTargetInfo').innerHTML = targetInfo;
+    
+    // Show modal
+    document.getElementById('trainingModal').classList.remove('hidden');
+}
+
+function closeTrainingModal() {
+    document.getElementById('trainingModal').classList.add('hidden');
+    selectedTrainingModule = null;
+    selectedAssignmentType = null;
+}
+
+function submitTrainingAssignment() {
+    if (!selectedTrainingModule || !selectedAssignmentType) {
+        alert('{{ _('Please select a training module') }}');
+        return;
+    }
+    
+    const dueDate = document.getElementById('trainingDueDate').value;
+    
+    const requestData = {
+        training_module_id: selectedTrainingModule.id,
+        assignment_type: selectedAssignmentType,
+        due_date: dueDate || null
+    };
+    
+    fetch(`/simulation/campaigns/{{ campaign.id }}/assign-training`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeTrainingModal();
+            alert(`{{ _('Training module') }} "${data.training_module}" {{ _('assigned to') }} ${data.assigned_count} {{ _('employees') }}`);
+        } else {
+            alert(`{{ _('Failed to assign training') }}: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('{{ _('Failed to assign training') }}');
+    });
+}
+</script>
 {% endblock %}

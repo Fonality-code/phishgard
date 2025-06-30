@@ -123,9 +123,23 @@ def campaign_detail(id):
     # Get analytics
     analytics = PhishingSimulationService.get_campaign_analytics(id)
 
+    # Get available training modules for assignment
+    training_modules = TrainingModule.query.filter_by(
+        is_active=True,
+        created_by_id=current_user.id
+    ).order_by(TrainingModule.title).all()
+
+    # Get employees who clicked the phishing link (failed the test)
+    failed_employees = []
+    for target in campaign.targets:
+        if target.status in [EmployeeStatus.CLICKED]:
+            failed_employees.append(target.employee)
+
     return render_template('simulation/campaign_detail.html',
                          campaign=campaign,
-                         analytics=analytics)
+                         analytics=analytics,
+                         training_modules=training_modules,
+                         failed_employees=failed_employees)
 
 
 @simulation.route('/campaigns/<int:id>/start', methods=['POST'])
@@ -183,6 +197,74 @@ def complete_campaign(id):
         flash('Failed to complete campaign.', 'error')
 
     return redirect(url_for('simulation.campaign_detail', id=id))
+
+
+@simulation.route('/campaigns/<int:id>/assign-training', methods=['POST'])
+@login_required
+def assign_training_to_campaign(id):
+    """Assign training module to employees who failed the campaign"""
+    campaign = Campaign.query.get_or_404(id)
+
+    if campaign.created_by_id != current_user.id:
+        abort(403)
+
+    try:
+        data = request.get_json()
+        training_module_id = data.get('training_module_id')
+        assignment_type = data.get('assignment_type', 'failed_only')  # failed_only, all_targets
+        due_date = datetime.fromisoformat(data.get('due_date')) if data.get('due_date') else None
+
+        if not training_module_id:
+            return jsonify({'success': False, 'error': 'Training module ID is required'})
+
+        # Get the training module
+        training_module = TrainingModule.query.get_or_404(training_module_id)
+        
+        if training_module.created_by_id != current_user.id:
+            return jsonify({'success': False, 'error': 'Training module not found'})
+
+        assigned_count = 0
+        employees_to_assign = []
+
+        if assignment_type == 'failed_only':
+            # Assign only to employees who clicked the phishing link
+            for target in campaign.targets:
+                if target.status in [EmployeeStatus.CLICKED]:
+                    employees_to_assign.append(target.employee)
+        elif assignment_type == 'all_targets':
+            # Assign to all campaign targets
+            employees_to_assign = [target.employee for target in campaign.targets]
+        else:
+            return jsonify({'success': False, 'error': 'Invalid assignment type'})
+
+        # Create training progress records
+        for employee in employees_to_assign:
+            existing = TrainingProgress.query.filter_by(
+                employee_id=employee.id,
+                training_module_id=training_module_id
+            ).first()
+
+            if not existing:
+                progress = TrainingProgress(
+                    employee_id=employee.id,
+                    training_module_id=training_module_id,
+                    started_at=datetime.utcnow(),
+                    status='not_started'
+                )
+                db.session.add(progress)
+                assigned_count += 1
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'assigned_count': assigned_count,
+            'training_module': training_module.title
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @simulation.route('/employees')
