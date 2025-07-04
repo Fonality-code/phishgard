@@ -433,8 +433,9 @@
 
     function assignTraining(moduleId, assignmentType) {
         // Find the module data
-        const moduleData = {{ training_modules | tojson }};
-        selectedTrainingModule = moduleData.find(m => m.id === moduleId);
+        const moduleData = {{ training_modules | tojson
+    }};
+    selectedTrainingModule = moduleData.find(m => m.id === moduleId);
     selectedAssignmentType = assignmentType;
 
     if (!selectedTrainingModule) {
@@ -457,7 +458,7 @@
     `;
 
     // Populate assignment target info
-    const failedCount = {{ failed_employees|length }};
+    const failedCount = {{ failed_employees| length }};
     const totalTargets = {{ campaign.total_targets }};
 
     let targetInfo = '';
