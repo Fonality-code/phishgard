@@ -7,6 +7,7 @@ This module contains all views related to phishing simulations including:
 - Analytics dashboard
 - Employee management
 """
+from flask_babel import _
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
@@ -656,26 +657,161 @@ def training_module_detail(id):
         db.session.add(progress)
         db.session.commit()
 
+    # Get department statistics for analytics
+    department_stats = {
+        'labels': ['Engineering', 'Marketing', 'Sales', 'HR'],
+        'data': [85, 92, 78, 95]  # Sample completion rates
+    }
+
+    # Get all progress records for this module
+    all_progress = TrainingProgress.query.filter_by(training_module_id=id).all()
+
+    # Calculate statistics
+    total_assigned = len(all_progress)
+    completed = len([p for p in all_progress if p.status == 'completed'])
+    in_progress = len([p for p in all_progress if p.status == 'in_progress'])
+    not_started = len([p for p in all_progress if p.status == 'not_started'])
+
+    completion_rate = (completed / total_assigned * 100) if total_assigned > 0 else 0
+
     return render_template('simulation/training_module_detail.html',
-                         module=module, progress=progress)
+                         module=module,
+                         progress=progress,
+                         department_stats=department_stats,
+                         progress_stats={
+                             'total_assigned': total_assigned,
+                             'completed': completed,
+                             'in_progress': in_progress,
+                             'not_started': not_started,
+                             'completion_rate': completion_rate
+                         })
 
 
 @simulation.route('/training/create', methods=['GET', 'POST'])
 @login_required
 def create_training_module():
     """Create a new training module"""
-    # This would need a TrainingModuleForm - for now, redirect to modules list
-    flash('Training module creation is coming soon!', 'info')
-    return redirect(url_for('simulation.training_modules'))
+    from app.views.simulation.forms import TrainingModuleForm
+    from app.models.simulation import TrainingModule
+
+    form = TrainingModuleForm()
+
+    if form.validate_on_submit():
+        try:
+            # Process quiz questions from the form
+            quiz_questions = []
+            question_count = 1
+
+            while f'quiz_question_{question_count}' in request.form:
+                question_text = request.form.get(f'quiz_question_{question_count}')
+                if question_text:
+                    options = []
+                    for i in range(4):  # 4 options per question
+                        option_text = request.form.get(f'quiz_option_{question_count}_{i}')
+                        if option_text:
+                            options.append(option_text)
+
+                    correct_answer = request.form.get(f'correct_answer_{question_count}')
+                    if correct_answer is not None:
+                        quiz_questions.append({
+                            'id': question_count,
+                            'question': question_text,
+                            'options': options,
+                            'correct_answer': int(correct_answer)
+                        })
+
+                question_count += 1
+
+            # Create the training module
+            module = TrainingModule(
+                title=form.title.data,
+                description=form.description.data,
+                content=form.content.data,
+                category=form.category.data,
+                difficulty_level=form.difficulty_level.data,
+                estimated_duration=form.estimated_duration.data,
+                video_url=form.video_url.data if form.video_url.data else None,
+                quiz_questions=quiz_questions if quiz_questions else None,
+                created_by_id=current_user.id,
+                is_active=True
+            )
+
+            db.session.add(module)
+            db.session.commit()
+
+            flash(_('Training module created successfully!'), 'success')
+            return redirect(url_for('simulation.training_module_detail', id=module.id))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(_('An error occurred while creating the training module.'), 'error')
+            logger.error(f"Error creating training module: {str(e)}")
+
+    return render_template('simulation/create_training_module.html', form=form)
 
 
 @simulation.route('/training/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_training_module(id):
     """Edit a training module"""
+    from app.views.simulation.forms import TrainingModuleForm
+
     module = TrainingModule.query.get_or_404(id)
-    flash('Training module editing is coming soon!', 'info')
-    return redirect(url_for('simulation.training_module_detail', id=id))
+
+    # Check permission
+    if module.created_by_id != current_user.id:
+        abort(403)
+
+    form = TrainingModuleForm(obj=module)
+
+    if form.validate_on_submit():
+        try:
+            # Process quiz questions from the form
+            quiz_questions = []
+            question_count = 1
+
+            while f'quiz_question_{question_count}' in request.form:
+                question_text = request.form.get(f'quiz_question_{question_count}')
+                if question_text:
+                    options = []
+                    for i in range(4):  # 4 options per question
+                        option_text = request.form.get(f'quiz_option_{question_count}_{i}')
+                        if option_text:
+                            options.append(option_text)
+
+                    correct_answer = request.form.get(f'correct_answer_{question_count}')
+                    if correct_answer is not None:
+                        quiz_questions.append({
+                            'id': question_count,
+                            'question': question_text,
+                            'options': options,
+                            'correct_answer': int(correct_answer)
+                        })
+
+                question_count += 1
+
+            # Update the training module
+            module.title = form.title.data
+            module.description = form.description.data
+            module.content = form.content.data
+            module.category = form.category.data
+            module.difficulty_level = form.difficulty_level.data
+            module.estimated_duration = form.estimated_duration.data
+            module.video_url = form.video_url.data if form.video_url.data else None
+            module.quiz_questions = quiz_questions if quiz_questions else None
+            module.updated_at = datetime.utcnow()
+
+            db.session.commit()
+
+            flash(_('Training module updated successfully!'), 'success')
+            return redirect(url_for('simulation.training_module_detail', id=module.id))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(_('An error occurred while updating the training module.'), 'error')
+            logger.error(f"Error updating training module: {str(e)}")
+
+    return render_template('simulation/edit_training_module.html', form=form, module=module)
 
 
 @simulation.route('/training/<int:id>/assign', methods=['POST'])
@@ -983,30 +1119,30 @@ def start_security_chat():
     """Start a new AI security chat session"""
     from app.models.simulation import AISecurityChat
     from app.utils.ai_chat_service import AIPhishingSecurityChat
-    
+
     try:
         data = request.get_json()
         target_id = data.get('target_id')
-        
+
         # Create new chat session
         chat_session = AISecurityChat(
             target_id=target_id,
             ip_address=request.remote_addr,
             user_agent=request.headers.get('User-Agent')
         )
-        
+
         if current_user.is_authenticated:
             chat_session.user_id = current_user.id
-        
+
         db.session.add(chat_session)
         db.session.commit()
-        
+
         # Get welcome message from AI
         ai_service = AIPhishingSecurityChat()
         welcome_response = ai_service.get_ai_response(
             "Hello, I clicked on a phishing link and want to learn about security."
         )
-        
+
         # Save welcome message
         from app.models.simulation import AIChatMessage
         welcome_msg = AIChatMessage(
@@ -1017,14 +1153,14 @@ def start_security_chat():
         )
         db.session.add(welcome_msg)
         db.session.commit()
-        
+
         return jsonify({
             'success': True,
             'session_id': chat_session.session_id,
             'welcome_message': welcome_response['response'],
             'suggestions': welcome_response.get('suggestions', [])
         })
-        
+
     except Exception as e:
         logger.error(f"Error starting chat session: {str(e)}")
         return jsonify({'success': False, 'error': 'Failed to start chat session'})
@@ -1036,19 +1172,19 @@ def send_chat_message(session_id):
     from app.models.simulation import AISecurityChat, AIChatMessage
     from app.utils.ai_chat_service import AIPhishingSecurityChat
     import time
-    
+
     try:
         # Get chat session
         chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
         if not chat_session:
             return jsonify({'success': False, 'error': 'Chat session not found'})
-        
+
         data = request.get_json()
         user_message = data.get('message', '').strip()
-        
+
         if not user_message:
             return jsonify({'success': False, 'error': 'Message cannot be empty'})
-        
+
         # Save user message
         user_msg = AIChatMessage(
             chat_session_id=chat_session.id,
@@ -1056,12 +1192,12 @@ def send_chat_message(session_id):
             is_user=True
         )
         db.session.add(user_msg)
-        
+
         # Get conversation history for context
         recent_messages = AIChatMessage.query.filter_by(
             chat_session_id=chat_session.id
         ).order_by(AIChatMessage.timestamp.desc()).limit(10).all()
-        
+
         conversation_history = [
             {
                 'message': msg.message,
@@ -1070,15 +1206,15 @@ def send_chat_message(session_id):
             }
             for msg in reversed(recent_messages)
         ]
-        
+
         # Get AI response
         ai_service = AIPhishingSecurityChat()
         start_time = time.time()
-        
+
         ai_response = ai_service.get_ai_response(user_message, conversation_history)
-        
+
         response_time_ms = int((time.time() - start_time) * 1000)
-        
+
         # Save AI response
         ai_msg = AIChatMessage(
             chat_session_id=chat_session.id,
@@ -1088,19 +1224,19 @@ def send_chat_message(session_id):
             response_time_ms=response_time_ms
         )
         db.session.add(ai_msg)
-        
+
         # Update session last activity
         chat_session.last_activity = datetime.utcnow()
-        
+
         db.session.commit()
-        
+
         return jsonify({
             'success': True,
             'response': ai_response['response'],
             'suggestions': ai_response.get('suggestions', []),
             'response_time_ms': response_time_ms
         })
-        
+
     except Exception as e:
         logger.error(f"Error sending chat message: {str(e)}")
         return jsonify({'success': False, 'error': 'Failed to send message'})
@@ -1110,24 +1246,24 @@ def send_chat_message(session_id):
 def get_chat_history(session_id):
     """Get chat conversation history"""
     from app.models.simulation import AISecurityChat, AIChatMessage
-    
+
     try:
         # Get chat session
         chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
         if not chat_session:
             return jsonify({'success': False, 'error': 'Chat session not found'})
-        
+
         # Get messages
         messages = AIChatMessage.query.filter_by(
             chat_session_id=chat_session.id
         ).order_by(AIChatMessage.timestamp.asc()).all()
-        
+
         return jsonify({
             'success': True,
             'messages': [msg.to_dict() for msg in messages],
             'session_info': chat_session.to_dict()
         })
-        
+
     except Exception as e:
         logger.error(f"Error getting chat history: {str(e)}")
         return jsonify({'success': False, 'error': 'Failed to get chat history'})

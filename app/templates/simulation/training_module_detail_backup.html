@@ -10,17 +10,14 @@
                 <nav class="flex" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
                         <li class="inline-flex items-center">
-                            <a href="{{ url_for('simulation.training_modules') }}"
-                                class="text-gray-700 hover:text-primary-600">
+                            <a href="{{ url_for('simulation.training_modules') }}" class="text-gray-700 hover:text-primary-600">
                                 Training Modules
                             </a>
                         </li>
                         <li>
                             <div class="flex items-center">
                                 <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                        clip-rule="evenodd"></path>
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-gray-500 md:ml-2">{{ module.title }}</span>
                             </div>
@@ -30,13 +27,13 @@
                 <h1 class="text-2xl font-bold text-gray-900 mt-2">{{ module.title }}</h1>
             </div>
             <div class="flex space-x-3">
-                <a href="{{ url_for('simulation.edit_training_module', id=module.id) }}"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <a href="{{ url_for('simulation.edit_training_module', id=module.id) }}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                     <i class="fas fa-edit -ml-1 mr-2 h-4 w-4"></i>
                     Edit Module
                 </a>
-                <a href="{{ url_for('simulation.training_modules') }}"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <a href="{{ url_for('simulation.training_modules') }}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                     <i class="fas fa-arrow-left -ml-1 mr-2 h-4 w-4"></i>
                     Back to Modules
                 </a>
@@ -54,18 +51,16 @@
                 <div class="p-6">
                     <div class="mb-6">
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span
-                                class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-primary-100 text-primary-800">
+                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-primary-100 text-primary-800">
                                 {{ module.category.replace('_', ' ').title() }}
                             </span>
-                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium
-                                {{ 'bg-green-100 text-green-800' if module.difficulty_level == 'beginner' else
-                                   'bg-yellow-100 text-yellow-800' if module.difficulty_level == 'intermediate' else
+                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium 
+                                {{ 'bg-green-100 text-green-800' if module.difficulty_level == 'beginner' else 
+                                   'bg-yellow-100 text-yellow-800' if module.difficulty_level == 'intermediate' else 
                                    'bg-red-100 text-red-800' }}">
                                 {{ module.difficulty_level.title() }}
                             </span>
-                            <span
-                                class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                 <i class="fas fa-clock mr-1"></i>
                                 {{ module.estimated_duration }} minutes
                             </span>
@@ -76,8 +71,7 @@
 
                     {% if module.thumbnail_url %}
                     <div class="mb-6">
-                        <img src="{{ module.thumbnail_url }}" class="w-full h-64 object-cover rounded-lg"
-                            alt="{{ module.title }}">
+                        <img src="{{ module.thumbnail_url }}" class="w-full h-64 object-cover rounded-lg" alt="{{ module.title }}">
                     </div>
                     {% endif %}
 
@@ -96,8 +90,8 @@
                                 <div class="space-y-2">
                                     {% for option in question.options %}
                                     <label class="flex items-center">
-                                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ loop.index0 }}"
-                                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                        <input type="radio" name="question_{{ loop.index0 }}" value="{{ loop.index0 }}" 
+                                               class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
                                         <span class="ml-3 text-gray-700">{{ option }}</span>
                                     </label>
                                     {% endfor %}
@@ -105,7 +99,7 @@
                             </div>
                             {% endfor %}
                             <button type="button" onclick="submitQuiz()"
-                                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                                 Submit Quiz
                             </button>
                         </div>
@@ -192,17 +186,17 @@
                 </div>
                 <div class="p-6 space-y-3">
                     <button type="button" onclick="assignModule()"
-                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                         <i class="fas fa-user-plus mr-2"></i>
                         Assign to Employees
                     </button>
                     <button type="button" onclick="exportProgress()"
-                        class="w-full flex justify-center items-center py-2 px-4 border border-primary-300 rounded-md shadow-sm text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            class="w-full flex justify-center items-center py-2 px-4 border border-primary-300 rounded-md shadow-sm text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                         <i class="fas fa-download mr-2"></i>
                         Export Progress Report
                     </button>
                     <button type="button" onclick="sendReminders()"
-                        class="w-full flex justify-center items-center py-2 px-4 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                            class="w-full flex justify-center items-center py-2 px-4 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
                         <i class="fas fa-bell mr-2"></i>
                         Send Reminders
                     </button>
@@ -222,14 +216,13 @@
                             <li>
                                 <div class="relative pb-8">
                                     {% if not loop.last %}
-                                    <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                                        aria-hidden="true"></span>
+                                    <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
                                     {% endif %}
                                     <div class="relative flex space-x-3">
                                         <div>
-                                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white
-                                                {{ 'bg-green-500' if activity.type == 'completed' else
-                                                   'bg-primary-500' if activity.type == 'started' else
+                                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white 
+                                                {{ 'bg-green-500' if activity.type == 'completed' else 
+                                                   'bg-primary-500' if activity.type == 'started' else 
                                                    'bg-blue-500' }}">
                                                 <i class="fas fa-check text-white text-xs"></i>
                                             </span>
@@ -258,18 +251,15 @@
 </div>
 
 <!-- Assignment Modal -->
-<div id="assignmentModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog"
-    aria-modal="true">
+<div id="assignmentModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div
-            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                     <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Assign Training Module
-                        </h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Assign Training Module</h3>
                         <div class="mt-4">
                             <form id="assignmentForm" class="space-y-4">
                                 <div>
@@ -277,34 +267,24 @@
                                     <fieldset class="mt-2">
                                         <div class="space-y-2">
                                             <div class="flex items-center">
-                                                <input id="all" name="assignment_type" type="radio" value="all" checked
-                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                <label for="all" class="ml-3 text-sm font-medium text-gray-700">All
-                                                    Employees</label>
+                                                <input id="all" name="assignment_type" type="radio" value="all" checked class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                <label for="all" class="ml-3 text-sm font-medium text-gray-700">All Employees</label>
                                             </div>
                                             <div class="flex items-center">
-                                                <input id="department" name="assignment_type" type="radio"
-                                                    value="department"
-                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                <label for="department"
-                                                    class="ml-3 text-sm font-medium text-gray-700">By Department</label>
+                                                <input id="department" name="assignment_type" type="radio" value="department" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                <label for="department" class="ml-3 text-sm font-medium text-gray-700">By Department</label>
                                             </div>
                                             <div class="flex items-center">
-                                                <input id="specific" name="assignment_type" type="radio"
-                                                    value="specific"
-                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                <label for="specific"
-                                                    class="ml-3 text-sm font-medium text-gray-700">Specific
-                                                    Employees</label>
+                                                <input id="specific" name="assignment_type" type="radio" value="specific" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                <label for="specific" class="ml-3 text-sm font-medium text-gray-700">Specific Employees</label>
                                             </div>
                                         </div>
                                     </fieldset>
                                 </div>
                                 <div>
-                                    <label for="due_date" class="block text-sm font-medium text-gray-700">Due
-                                        Date</label>
+                                    <label for="due_date" class="block text-sm font-medium text-gray-700">Due Date</label>
                                     <input type="date" name="due_date" id="due_date" required
-                                        class="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                           class="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                 </div>
                             </form>
                         </div>
@@ -313,11 +293,11 @@
             </div>
             <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button type="button" onclick="submitAssignment()"
-                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm">
                     Assign Module
                 </button>
                 <button type="button" onclick="closeAssignmentModal()"
-                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     Cancel
                 </button>
             </div>
@@ -336,8 +316,8 @@
             datasets: [{
                 data: [{{ progress_stats.completed }}, {{ progress_stats.in_progress }}, {{ progress_stats.not_started }}],
         backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-            }]
-        },
+        }]
+    },
         options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -348,7 +328,7 @@
             }
         }
     }
-    });
+});
 
     const departmentCtx = document.getElementById('departmentChart').getContext('2d');
     new Chart(departmentCtx, {
@@ -359,8 +339,8 @@
             label: 'Completion Rate',
             data: {{ department_stats.data | tojson }},
         backgroundColor: '#007bff'
-            }]
-        },
+        }]
+    },
         options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -382,14 +362,10 @@
             }
         }
     }
-    });
+});
 
     function assignModule() {
-        document.getElementById('assignmentModal').classList.remove('hidden');
-    }
-
-    function closeAssignmentModal() {
-        document.getElementById('assignmentModal').classList.add('hidden');
+        new bootstrap.Modal(document.getElementById('assignmentModal')).show();
     }
 
     function submitAssignment() {
@@ -409,7 +385,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    closeAssignmentModal();
+                    bootstrap.Modal.getInstance(document.getElementById('assignmentModal')).hide();
                     alert(`Training module assigned to ${data.assigned_count} employees`);
                     location.reload();
                 } else {
@@ -481,13 +457,6 @@
                 alert('Failed to submit quiz');
             });
     }
-
-    // Close modal when clicking outside
-    document.getElementById('assignmentModal').addEventListener('click', function (e) {
-        if (e.target === this) {
-            closeAssignmentModal();
-        }
-    });
 </script>
 
 <style>

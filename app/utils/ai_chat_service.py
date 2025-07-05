@@ -7,19 +7,17 @@ cybersecurity concepts and prevention methods.
 """
 import os
 import logging
-from typing import List, Dict, Any, Optional
-from datetime import datetime
+from typing import List, Dict, Any
 from flask import current_app
-from app.extensions import db
 
 logger = logging.getLogger(__name__)
 
 # Try to import OpenAI - gracefully handle if not installed
 try:
     from openai import OpenAI
-    OPENAI_AVAILABLE = True
+    openai_available = True
 except ImportError:
-    OPENAI_AVAILABLE = False
+    openai_available = False
     logger.warning("OpenAI library not available. AI chat features will be disabled.")
 
 
@@ -31,7 +29,7 @@ class AIPhishingSecurityChat:
 
     def __init__(self):
         self.client = None
-        if OPENAI_AVAILABLE:
+        if openai_available:
             api_key = current_app.config.get('OPENAI_API_KEY') or os.getenv('OPENAI_API_KEY')
             if api_key:
                 self.client = OpenAI(api_key=api_key)
@@ -243,7 +241,7 @@ What would you like to learn about cybersecurity today?""",
                 ]
             }
 
-    def get_ai_response(self, message: str, conversation_history: List[Dict] = None) -> Dict[str, Any]:
+    def get_ai_response(self, message: str, conversation_history: List[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Get AI response using OpenAI API or fallback responses.
         """
@@ -273,7 +271,11 @@ What would you like to learn about cybersecurity today?""",
                 frequency_penalty=0.1
             )
 
-            ai_response = response.choices[0].message.content.strip()
+            ai_response = response.choices[0].message.content
+            if ai_response:
+                ai_response = ai_response.strip()
+            else:
+                ai_response = "I apologize, but I'm having trouble generating a response right now. Please try asking your question again."
 
             # Generate context-appropriate suggestions
             suggestions = self._generate_suggestions(message, ai_response)

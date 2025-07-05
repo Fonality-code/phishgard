@@ -1,0 +1,220 @@
+{% extends 'layouts/app.html' %}
+{% set title = _('Create Training Module') %}
+
+{% block page_content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex items-center mb-8">
+        <a href="{{ url_for('simulation.training_modules') }}" class="text-blue-600 hover:text-blue-800 mr-4">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">{{ _('Create Training Module') }}</h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+
+            <!-- Module Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    {{ form.title.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.title(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
+                    focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.title.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.title.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {{ form.category.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.category(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
+                    focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.category.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.category.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {{ form.difficulty_level.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.difficulty_level(class="w-full px-3 py-2 border border-gray-300 rounded-md
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.difficulty_level.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.difficulty_level.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                {{ form.description.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                {{ form.description(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent", rows="3") }}
+                {% if form.description.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                    {% for error in form.description.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Content Section -->
+            <div>
+                {{ form.content.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                <div class="text-sm text-gray-500 mb-2">{{ _('You can use HTML formatting for rich content') }}</div>
+                {{ form.content(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent", rows="12") }}
+                {% if form.content.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                    {% for error in form.content.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Additional Settings -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    {{ form.estimated_duration.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.estimated_duration(class="w-full px-3 py-2 border border-gray-300 rounded-md
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.estimated_duration.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.estimated_duration.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">{{ _('Estimated completion time in minutes') }}</p>
+                </div>
+
+                <div>
+                    {{ form.video_url.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.video_url(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
+                    focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.video_url.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.video_url.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">{{ _('Optional: YouTube, Vimeo, or other video URL') }}</p>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ _('Knowledge Check Quiz') }} ({{ _('Optional') }})
+                </h3>
+                <div id="quiz-questions">
+                    <!-- Quiz questions will be added here dynamically -->
+                </div>
+                <button type="button" id="add-question-btn"
+                    class="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <i class="fas fa-plus mr-2"></i>{{ _('Add Question') }}
+                </button>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4 pt-6 border-t">
+                <a href="{{ url_for('simulation.training_modules') }}"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    {{ _('Cancel') }}
+                </a>
+                <button type="submit"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    {{ _('Create Module') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let questionCount = 0;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('add-question-btn').addEventListener('click', addQuestion);
+    });
+
+    function addQuestion() {
+        questionCount++;
+        const questionsContainer = document.getElementById('quiz-questions');
+
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'border border-gray-200 rounded-lg p-4 mb-4';
+        questionDiv.id = `question-${questionCount}`;
+
+        questionDiv.innerHTML = `
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="text-md font-medium text-gray-900">{{ _('Question') }} ${questionCount}</h4>
+            <button type="button" onclick="removeQuestion(${questionCount})"
+                    class="text-red-600 hover:text-red-800">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+
+        <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ _('Question Text') }}</label>
+            <input type="text" name="quiz_question_${questionCount}"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   placeholder="{{ _('Enter your question...') }}" required>
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">{{ _('Answer Options') }}</label>
+            <div class="space-y-2" id="options-${questionCount}">
+                <div class="flex items-center space-x-2">
+                    <input type="radio" name="correct_answer_${questionCount}" value="0" class="mr-2">
+                    <input type="text" name="quiz_option_${questionCount}_0"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="{{ _('Option 1') }}" required>
+                    <span class="text-sm text-gray-500">{{ _('(Correct)') }}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="radio" name="correct_answer_${questionCount}" value="1" class="mr-2">
+                    <input type="text" name="quiz_option_${questionCount}_1"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="{{ _('Option 2') }}" required>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="radio" name="correct_answer_${questionCount}" value="2" class="mr-2">
+                    <input type="text" name="quiz_option_${questionCount}_2"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="{{ _('Option 3') }}" required>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="radio" name="correct_answer_${questionCount}" value="3" class="mr-2">
+                    <input type="text" name="quiz_option_${questionCount}_3"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="{{ _('Option 4') }}" required>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500">{{ _('Select the radio button next to the correct answer') }}</p>
+        </div>
+    `;
+
+        questionsContainer.appendChild(questionDiv);
+    }
+
+    function removeQuestion(questionId) {
+        const questionElement = document.getElementById(`question-${questionId}`);
+        if (questionElement) {
+            questionElement.remove();
+        }
+    }
+</script>
+{% endblock %}
