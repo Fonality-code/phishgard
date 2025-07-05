@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Assistant - PhishGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .chat-container {
+            height: calc(100vh - 200px);
+            max-height: 600px;
+        }
+
+        .chat-messages {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+
+        .message {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #9CA3AF;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .suggestion-btn {
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">PhishGuard Security Assistant</h1>
+                        <p class="text-gray-600">Learn about cybersecurity and protect yourself from phishing</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                    <span class="text-sm text-gray-600">AI Assistant Online</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Banner -->
+        <div class="bg-orange-100 border-l-4 border-orange-500 p-4 mb-6 rounded-r-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-orange-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-orange-700">
+                        <strong>You clicked on a phishing link.</strong> This AI assistant will help you understand what
+                        happened and how to protect yourself.
+                        I can only answer questions about cybersecurity and phishing prevention.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="bg-white rounded-lg shadow-lg chat-container">
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="chat-messages p-4 space-y-4">
+                <!-- Welcome message will be inserted here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typingIndicator" class="typing-indicator hidden">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span class="ml-2 text-gray-500 text-sm">PhishGuard AI is typing...</span>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div id="suggestions" class="p-4 border-t border-gray-200">
+                <div class="text-sm text-gray-600 mb-2">Quick questions:</div>
+                <div id="suggestionButtons" class="flex flex-wrap gap-2">
+                    <!-- Suggestion buttons will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex space-x-2">
+                    <input type="text" id="messageInput" placeholder="Ask me about cybersecurity..."
+                        class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        maxlength="500">
+                    <button id="sendButton"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Send
+                    </button>
+                </div>
+                <div class="text-xs text-gray-500 mt-2">
+                    This AI assistant only answers cybersecurity-related questions. Maximum 500 characters.
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                <i class="fas fa-info-circle mr-1"></i>
+                This was a simulated phishing attack for educational purposes. No actual harm was done.
+            </p>
+            <div class="mt-2">
+                <button onclick="window.close()" class="text-blue-600 hover:text-blue-800 text-sm underline">
+                    Close Chat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatSessionId = null;
+        let isWaitingForResponse = false;
+
+        // Initialize chat on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetId = urlParams.get('target_id');
+
+            initializeChat(targetId);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            // Send message on Enter key
+            messageInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);
+
+            // Auto-resize input
+            messageInput.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+
+        async function initializeChat(targetId) {
+            try {
+                const response = await fetch('/simulation/security-chat/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ target_id: targetId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    chatSessionId = data.session_id;
+
+                    // Add welcome message
+                    addMessage(data.welcome_message, false);
+
+                    // Add suggestions
+                    updateSuggestions(data.suggestions || []);
+                } else {
+                    addMessage('Sorry, I encountered an error starting our conversation. Please try refreshing the page.', false);
+                }
+            } catch (error) {
+                console.error('Error initializing chat:', error);
+                addMessage('Sorry, I encountered an error starting our conversation. Please try refreshing the page.', false);
+            }
+        }
+
+        async function sendMessage(messageText = null) {
+            if (isWaitingForResponse) return;
+
+            const messageInput = document.getElementById('messageInput');
+            const message = messageText || messageInput.value.trim();
+
+            if (!message || !chatSessionId) return;
+
+            // Clear input if using typed message
+            if (!messageText) {
+                messageInput.value = '';
+            }
+
+            // Add user message to chat
+            addMessage(message, true);
+
+            // Show typing indicator
+            showTypingIndicator();
+            isWaitingForResponse = true;
+
+            try {
+                const response = await fetch(`/simulation/security-chat/${chatSessionId}/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                // Hide typing indicator
+                hideTypingIndicator();
+                isWaitingForResponse = false;
+
+                if (data.success) {
+                    // Add AI response
+                    addMessage(data.response, false);
+
+                    // Update suggestions
+                    updateSuggestions(data.suggestions || []);
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', false);
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                hideTypingIndicator();
+                isWaitingForResponse = false;
+                addMessage('Sorry, I encountered an error. Please try again.', false);
+            }
+        }
+
+        function addMessage(message, isUser) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message flex ${isUser ? 'justify-end' : 'justify-start'}`;
+
+            const messageContent = document.createElement('div');
+            messageContent.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${isUser
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-900'
+                }`;
+
+            // Format message with line breaks
+            messageContent.innerHTML = message.replace(/\n/g, '<br>');
+
+            if (!isUser) {
+                // Add AI avatar
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-2 flex-shrink-0';
+                avatar.innerHTML = '<i class="fas fa-robot text-white text-sm"></i>';
+                messageDiv.appendChild(avatar);
+            }
+
+            messageDiv.appendChild(messageContent);
+
+            if (isUser) {
+                // Add user avatar
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center ml-2 flex-shrink-0';
+                avatar.innerHTML = '<i class="fas fa-user text-white text-sm"></i>';
+                messageDiv.appendChild(avatar);
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function updateSuggestions(suggestions) {
+            const suggestionButtons = document.getElementById('suggestionButtons');
+            suggestionButtons.innerHTML = '';
+
+            suggestions.forEach(suggestion => {
+                const button = document.createElement('button');
+                button.className = 'suggestion-btn text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full border border-blue-200';
+                button.textContent = suggestion;
+                button.onclick = () => sendMessage(suggestion);
+                suggestionButtons.appendChild(button);
+            });
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('hidden');
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('hidden');
+        }
+
+        // Prevent form submission on Enter in input
+        document.getElementById('messageInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>

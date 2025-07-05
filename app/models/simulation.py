@@ -429,3 +429,78 @@ class TrainingProgress(db.Model):
             'completed_at': self.completed_at.isoformat() if self.completed_at else None,
             'last_accessed': self.last_accessed.isoformat() if self.last_accessed else None
         }
+
+
+class AISecurityChat(db.Model):
+    """AI-powered security chat sessions for phishing awareness"""
+
+    __tablename__ = 'ai_security_chats'
+
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.String(64), nullable=False, unique=True, default=lambda: str(uuid.uuid4()))
+
+    # Connection to phishing simulation
+    target_id = db.Column(db.String(64), nullable=True)  # CampaignTarget unique_id
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # If user is logged in
+
+    # Session metadata
+    ip_address = db.Column(db.String(45), nullable=True)
+    user_agent = db.Column(db.Text, nullable=True)
+
+    # Session tracking
+    started_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    last_activity = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    ended_at = db.Column(db.DateTime, nullable=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+
+    # Relationships
+    user = db.relationship('User', backref='ai_chat_sessions')
+    messages = db.relationship('AIChatMessage', backref='chat_session', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<AISecurityChat {self.session_id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'session_id': self.session_id,
+            'target_id': self.target_id,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'last_activity': self.last_activity.isoformat() if self.last_activity else None,
+            'is_active': self.is_active,
+            'message_count': len(self.messages)
+        }
+
+
+class AIChatMessage(db.Model):
+    """Individual messages in AI security chat sessions"""
+
+    __tablename__ = 'ai_chat_messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    chat_session_id = db.Column(db.Integer, db.ForeignKey('ai_security_chats.id'), nullable=False)
+
+    # Message content
+    message = db.Column(db.Text, nullable=False)
+    is_user = db.Column(db.Boolean, nullable=False)  # True for user messages, False for AI responses
+
+    # AI metadata (for AI messages only)
+    ai_model = db.Column(db.String(50), nullable=True)  # e.g., 'gpt-4', 'claude-3'
+    response_time_ms = db.Column(db.Integer, nullable=True)  # AI response time in milliseconds
+
+    # Timestamps
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    def __repr__(self):
+        sender = "User" if self.is_user else "AI"
+        return f'<AIChatMessage {sender}: {self.message[:50]}...>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'message': self.message,
+            'is_user': self.is_user,
+            'ai_model': self.ai_model,
+            'response_time_ms': self.response_time_ms,
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None
+        }

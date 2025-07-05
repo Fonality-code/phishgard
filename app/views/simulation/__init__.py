@@ -12,6 +12,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 import csv
 import io
+import logging
 from app.extensions import db
 from app.models.simulation import (
     Campaign, CampaignTarget, Employee, EmailTemplate,
@@ -23,6 +24,8 @@ from .forms import (
 )
 
 simulation = Blueprint('simulation', __name__, url_prefix='/simulation')
+
+logger = logging.getLogger(__name__)
 
 
 @simulation.route('/')
@@ -965,3 +968,166 @@ def dashboard_stats_api():
         created_by_id=current_user.id
     )
     return jsonify(stats)
+
+
+# AI Security Chat endpoints
+@simulation.route('/security-chat')
+def security_chat():
+    """AI-powered security chat interface"""
+    target_id = request.args.get('target_id')
+    return render_template('simulation/security_chat.html', target_id=target_id)
+
+
+@simulation.route('/security-chat/start', methods=['POST'])
+def start_security_chat():
+    """Start a new AI security chat session"""
+    from app.models.simulation import AISecurityChat
+    from app.utils.ai_chat_service import AIPhishingSecurityChat
+    
+    try:
+        data = request.get_json()
+        target_id = data.get('target_id')
+        
+        # Create new chat session
+        chat_session = AISecurityChat(
+            target_id=target_id,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get('User-Agent')
+        )
+        
+        if current_user.is_authenticated:
+            chat_session.user_id = current_user.id
+        
+        db.session.add(chat_session)
+        db.session.commit()
+        
+        # Get welcome message from AI
+        ai_service = AIPhishingSecurityChat()
+        welcome_response = ai_service.get_ai_response(
+            "Hello, I clicked on a phishing link and want to learn about security."
+        )
+        
+        # Save welcome message
+        from app.models.simulation import AIChatMessage
+        welcome_msg = AIChatMessage(
+            chat_session_id=chat_session.id,
+            message=welcome_response['response'],
+            is_user=False,
+            ai_model='ai_service'
+        )
+        db.session.add(welcome_msg)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'session_id': chat_session.session_id,
+            'welcome_message': welcome_response['response'],
+            'suggestions': welcome_response.get('suggestions', [])
+        })
+        
+    except Exception as e:
+        logger.error(f"Error starting chat session: {str(e)}")
+        return jsonify({'success': False, 'error': 'Failed to start chat session'})
+
+
+@simulation.route('/security-chat/<session_id>/message', methods=['POST'])
+def send_chat_message(session_id):
+    """Send a message to the AI security chat"""
+    from app.models.simulation import AISecurityChat, AIChatMessage
+    from app.utils.ai_chat_service import AIPhishingSecurityChat
+    import time
+    
+    try:
+        # Get chat session
+        chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
+        if not chat_session:
+            return jsonify({'success': False, 'error': 'Chat session not found'})
+        
+        data = request.get_json()
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({'success': False, 'error': 'Message cannot be empty'})
+        
+        # Save user message
+        user_msg = AIChatMessage(
+            chat_session_id=chat_session.id,
+            message=user_message,
+            is_user=True
+        )
+        db.session.add(user_msg)
+        
+        # Get conversation history for context
+        recent_messages = AIChatMessage.query.filter_by(
+            chat_session_id=chat_session.id
+        ).order_by(AIChatMessage.timestamp.desc()).limit(10).all()
+        
+        conversation_history = [
+            {
+                'message': msg.message,
+                'is_user': msg.is_user,
+                'timestamp': msg.timestamp
+            }
+            for msg in reversed(recent_messages)
+        ]
+        
+        # Get AI response
+        ai_service = AIPhishingSecurityChat()
+        start_time = time.time()
+        
+        ai_response = ai_service.get_ai_response(user_message, conversation_history)
+        
+        response_time_ms = int((time.time() - start_time) * 1000)
+        
+        # Save AI response
+        ai_msg = AIChatMessage(
+            chat_session_id=chat_session.id,
+            message=ai_response['response'],
+            is_user=False,
+            ai_model='ai_service',
+            response_time_ms=response_time_ms
+        )
+        db.session.add(ai_msg)
+        
+        # Update session last activity
+        chat_session.last_activity = datetime.utcnow()
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'response': ai_response['response'],
+            'suggestions': ai_response.get('suggestions', []),
+            'response_time_ms': response_time_ms
+        })
+        
+    except Exception as e:
+        logger.error(f"Error sending chat message: {str(e)}")
+        return jsonify({'success': False, 'error': 'Failed to send message'})
+
+
+@simulation.route('/security-chat/<session_id>/history')
+def get_chat_history(session_id):
+    """Get chat conversation history"""
+    from app.models.simulation import AISecurityChat, AIChatMessage
+    
+    try:
+        # Get chat session
+        chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
+        if not chat_session:
+            return jsonify({'success': False, 'error': 'Chat session not found'})
+        
+        # Get messages
+        messages = AIChatMessage.query.filter_by(
+            chat_session_id=chat_session.id
+        ).order_by(AIChatMessage.timestamp.asc()).all()
+        
+        return jsonify({
+            'success': True,
+            'messages': [msg.to_dict() for msg in messages],
+            'session_info': chat_session.to_dict()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting chat history: {str(e)}")
+        return jsonify({'success': False, 'error': 'Failed to get chat history'})

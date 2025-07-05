@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     """
@@ -20,6 +23,9 @@ class Config:
     MAIL_USERNAME: str = os.getenv('MAIL_USERNAME', 'e70f7ebba1121a')
     MAIL_PASSWORD: str = os.getenv('MAIL_PASSWORD', 'c7d89790dc29b7')
     MAIL_DEFAULT_SENDER: str = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@webapp.com')
+
+    # OpenAI Configuration for AI Chat
+    OPENAI_API_KEY: str = os.getenv('OPENAI_API_KEY', '')
 
     # Application settings
 

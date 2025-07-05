@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .container {
             max-width: 600px;
             background: white;
@@ -24,29 +25,29 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
             padding: 30px;
             text-align: center;
         }
-        
+
         .header h1 {
             margin: 0;
             font-size: 2rem;
             font-weight: 700;
         }
-        
+
         .header .icon {
             font-size: 3rem;
             margin-bottom: 10px;
         }
-        
+
         .content {
             padding: 30px;
         }
-        
+
         .alert-box {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -54,42 +55,42 @@
             padding: 20px;
             margin-bottom: 30px;
         }
-        
+
         .alert-box h2 {
             color: #856404;
             margin-top: 0;
             font-size: 1.2rem;
         }
-        
+
         .tips {
             background: #d1ecf1;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 30px;
         }
-        
+
         .tips h3 {
             color: #0c5460;
             margin-top: 0;
         }
-        
+
         .tips ul {
             margin: 0;
             padding-left: 20px;
         }
-        
+
         .tips li {
             margin-bottom: 8px;
             color: #0c5460;
         }
-        
+
         .footer {
             background: #f8f9fa;
             padding: 20px;
             text-align: center;
             border-top: 1px solid #e9ecef;
         }
-        
+
         .btn {
             display: inline-block;
             padding: 12px 24px;
@@ -100,12 +101,12 @@
             font-weight: 600;
             transition: background-color 0.3s;
         }
-        
+
         .btn:hover {
             background: #0056b3;
             color: white;
         }
-        
+
         .warning-icon {
             color: #ff6b6b;
             font-size: 1.2rem;
@@ -114,6 +115,7 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -121,66 +123,98 @@
             <h1>{{ _('Phishing Simulation Detected!') }}</h1>
             <p>{{ _('You have clicked on a simulated phishing link') }}</p>
         </div>
-        
+
         <div class="content">
             <div class="alert-box">
                 <h2><i class="fas fa-exclamation-triangle warning-icon"></i>{{ _('This was a training exercise') }}</h2>
-                <p>{{ _('You just clicked on a link in a simulated phishing email. In a real attack, this could have compromised your personal information, infected your computer with malware, or given attackers access to your accounts.') }}</p>
+                <p>{{ _('You just clicked on a link in a simulated phishing email. In a real attack, this could have
+                    compromised your personal information, infected your computer with malware, or given attackers
+                    access to your accounts.') }}</p>
             </div>
-            
+
             <div class="tips">
-                <h3><i class="fas fa-shield-alt" style="color: #28a745; margin-right: 8px;"></i>{{ _('How to Protect Yourself') }}</h3>
+                <h3><i class="fas fa-shield-alt" style="color: #28a745; margin-right: 8px;"></i>{{ _('How to Protect
+                    Yourself') }}</h3>
                 <ul>
-                    <li><strong>{{ _('Verify the sender:') }}</strong> {{ _('Check if you know and trust the person or organization sending the email.') }}</li>
-                    <li><strong>{{ _('Look for red flags:') }}</strong> {{ _('Poor grammar, urgent language, or requests for sensitive information.') }}</li>
-                    <li><strong>{{ _('Hover before clicking:') }}</strong> {{ _('Hover over links to see where they actually lead before clicking.') }}</li>
-                    <li><strong>{{ _('Use official channels:') }}</strong> {{ _('If an email claims to be from your bank or a service you use, log in through their official website instead of clicking the link.') }}</li>
-                    <li><strong>{{ _('Keep software updated:') }}</strong> {{ _('Use up-to-date antivirus software and keep your browser and operating system current.') }}</li>
-                    <li><strong>{{ _('Report suspicious emails:') }}</strong> {{ _('Forward suspicious emails to your IT department or use your email client\'s report phishing feature.') }}</li>
+                    <li><strong>{{ _('Verify the sender:') }}</strong> {{ _('Check if you know and trust the person or
+                        organization sending the email.') }}</li>
+                    <li><strong>{{ _('Look for red flags:') }}</strong> {{ _('Poor grammar, urgent language, or requests
+                        for sensitive information.') }}</li>
+                    <li><strong>{{ _('Hover before clicking:') }}</strong> {{ _('Hover over links to see where they
+                        actually lead before clicking.') }}</li>
+                    <li><strong>{{ _('Use official channels:') }}</strong> {{ _('If an email claims to be from your bank
+                        or a service you use, log in through their official website instead of clicking the link.') }}
+                    </li>
+                    <li><strong>{{ _('Keep software updated:') }}</strong> {{ _('Use up-to-date antivirus software and
+                        keep your browser and operating system current.') }}</li>
+                    <li><strong>{{ _('Report suspicious emails:') }}</strong> {{ _('Forward suspicious emails to your IT
+                        department or use your email client\'s report phishing feature.') }}</li>
                 </ul>
             </div>
-            
+
             <div style="background: #e8f5e8; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                <h3 style="color: #155724; margin-top: 0;"><i class="fas fa-lightbulb" style="color: #ffc107; margin-right: 8px;"></i>{{ _('What to do if you suspect a real phishing attempt:') }}</h3>
+                <h3 style="color: #155724; margin-top: 0;"><i class="fas fa-lightbulb"
+                        style="color: #ffc107; margin-right: 8px;"></i>{{ _('What to do if you suspect a real phishing
+                    attempt:') }}</h3>
                 <ol style="color: #155724; margin: 0; padding-left: 20px;">
                     <li>{{ _('Do not click any links or download attachments') }}</li>
                     <li>{{ _('Report the email to your IT security team immediately') }}</li>
                     <li>{{ _('Delete the suspicious email') }}</li>
-                    <li>{{ _('If you already clicked or entered information, change your passwords and contact IT') }}</li>
+                    <li>{{ _('If you already clicked or entered information, change your passwords and contact IT') }}
+                    </li>
                 </ol>
             </div>
-            
+
+            <div
+                style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #e9ecef;">
+                <h3 style="color: #495057; margin-top: 0; text-align: center;">
+                    <i class="fas fa-robot" style="color: #007bff; margin-right: 8px;"></i>{{ _('Need Help Understanding
+                    Security?') }}
+                </h3>
+                <p style="color: #6c757d; text-align: center; margin-bottom: 20px;">
+                    {{ _('Chat with our AI security assistant to learn more about phishing prevention, cybersecurity
+                    best practices, and how to stay safe online.') }}
+                </p>
+                <div style="text-align: center;">
+                    <button id="startAIChatBtn" class="btn" style="background: #28a745; margin-right: 10px;">
+                        <i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _('Chat with Security AI') }}
+                    </button>
+                </div>
+            </div>
+
             <div style="text-align: center; padding: 20px 0;">
-                <p style="color: #6c757d; margin-bottom: 20px;">{{ _('Thank you for participating in this security awareness training!') }}</p>
+                <p style="color: #6c757d; margin-bottom: 20px;">{{ _('Thank you for participating in this security
+                    awareness training!') }}</p>
                 <a href="#" onclick="window.close(); return false;" class="btn">
                     <i class="fas fa-check-circle" style="margin-right: 8px;"></i>{{ _('I Understand') }}
                 </a>
             </div>
         </div>
-        
+
         <div class="footer">
             <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">
                 <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
-                {{ _('This was a simulated phishing attack for training purposes. No actual harm was done to your system.') }}
+                {{ _('This was a simulated phishing attack for training purposes. No actual harm was done to your
+                system.') }}
             </p>
         </div>
     </div>
 
     <script>
         // Add some interactivity
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Fade in effect
             document.querySelector('.container').style.opacity = '0';
             document.querySelector('.container').style.transform = 'translateY(20px)';
             document.querySelector('.container').style.transition = 'opacity 0.6s, transform 0.6s';
-            
-            setTimeout(function() {
+
+            setTimeout(function () {
                 document.querySelector('.container').style.opacity = '1';
                 document.querySelector('.container').style.transform = 'translateY(0)';
             }, 100);
-            
+
             // Close button functionality
-            document.querySelector('.btn').addEventListener('click', function(e) {
+            document.querySelector('.btn[onclick]').addEventListener('click', function (e) {
                 e.preventDefault();
                 // Try to close the window
                 if (window.opener) {
@@ -190,7 +224,69 @@
                     window.location.href = 'about:blank';
                 }
             });
+
+            // AI Chat functionality
+            document.getElementById('startAIChatBtn').addEventListener('click', function () {
+                startAIChat();
+            });
         });
+
+        function startAIChat() {
+            const btn = document.getElementById('startAIChatBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>{{ _("Starting Chat...") }}';
+            btn.disabled = true;
+
+            fetch('/security-chat/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'context': 'phishing_awareness'
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.session_id) {
+                        // Open chat in a new window/tab
+                        const chatWindow = window.open(
+                            `/security-chat/${data.session_id}`,
+                            'SecurityChat',
+                            'width=800,height=600,scrollbars=yes,resizable=yes'
+                        );
+
+                        if (chatWindow) {
+                            btn.innerHTML = '<i class="fas fa-external-link-alt" style="margin-right: 8px;"></i>{{ _("Chat Opened") }}';
+                            btn.style.background = '#6c757d';
+
+                            // Reset button after a few seconds
+                            setTimeout(() => {
+                                btn.innerHTML = '<i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _("Chat with Security AI") }}';
+                                btn.style.background = '#28a745';
+                                btn.disabled = false;
+                            }, 3000);
+                        } else {
+                            // Popup blocked, redirect in same window
+                            window.location.href = `/security-chat/${data.session_id}`;
+                        }
+                    } else {
+                        throw new Error('Failed to start chat session');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error starting AI chat:', error);
+                    btn.innerHTML = '<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>{{ _("Chat Unavailable") }}';
+                    btn.style.background = '#dc3545';
+
+                    // Reset button after error
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _("Chat with Security AI") }}';
+                        btn.style.background = '#28a745';
+                        btn.disabled = false;
+                    }, 3000);
+                });
+        }
     </script>
 </body>
+
 </html>
