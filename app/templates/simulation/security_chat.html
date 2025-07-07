@@ -77,18 +77,18 @@
 
         .suggestion-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<body class="bg-gradient-to-br from-primary-50 to-accent-100 min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center mr-4">
                         <i class="fas fa-shield-alt text-white text-xl"></i>
                     </div>
                     <div>
@@ -146,10 +146,10 @@
             <div class="p-4 border-t border-gray-200">
                 <div class="flex space-x-2">
                     <input type="text" id="messageInput" placeholder="Ask me about cybersecurity..."
-                        class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         maxlength="500">
                     <button id="sendButton"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center">
                         <i class="fas fa-paper-plane mr-2"></i>
                         Send
                     </button>
@@ -297,8 +297,8 @@
 
             const messageContent = document.createElement('div');
             messageContent.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${isUser
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-900'
                 }`;
 
             // Format message with line breaks

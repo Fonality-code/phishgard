@@ -129,8 +129,8 @@
 <!-- Define CSS Variables for Theming -->
 <style>
     :root {
-        --primary-blue: #2563eb;
-        --primary-green: #22c55e;
+        --primary-blue: #1e3a8a;
+        --primary-navy: #172554;
         --text-dark: #1f2937;
         --text-light: #4b5563;
         --bg-light: #f9fafb;
@@ -144,7 +144,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(to right, var(--primary-blue), #1d4ed8);
+        background: linear-gradient(to right, var(--primary-blue), var(--primary-navy));
         color: var(--white);
         padding: 1rem 2rem;
         border-radius: 9999px;
@@ -154,7 +154,7 @@
     }
 
     .btn-primary:hover {
-        background: linear-gradient(to right, #1d4ed8, #1e40af);
+        background: linear-gradient(to right, var(--primary-navy), #0c1229);
         transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
     }
@@ -237,7 +237,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Simulated Phishing Campaigns -->
             <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                <div class="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center mb-4">
                     <i class="fas fa-envelope text-white text-xl"></i>
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ _('Simulated Phishing Campaigns') }}</h3>

@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('Phishing Awareness') }} - PhishGuard</title>
+    <title>{{ _('Phishing <h3 style="color: #495057; margin-top: 0; text-align: center;">
+            <i class="fas fa-robot" style="color: #1e3a8a; margin-right: 8px;"></i>{{ _('Need Help Understanding
+            Security?') }}
+        </h3>reness') }} - PhishGuard</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -94,7 +97,7 @@
         .btn {
             display: inline-block;
             padding: 12px 24px;
-            background: #007bff;
+            background: #1e3a8a;
             color: white;
             text-decoration: none;
             border-radius: 6px;
@@ -103,7 +106,7 @@
         }
 
         .btn:hover {
-            background: #0056b3;
+            background: #172554;
             color: white;
         }
 
@@ -176,7 +179,7 @@
                     best practices, and how to stay safe online.') }}
                 </p>
                 <div style="text-align: center;">
-                    <button id="startAIChatBtn" class="btn" style="background: #28a745; margin-right: 10px;">
+                    <button id="startAIChatBtn" class="btn" style="background: #1e3a8a; margin-right: 10px;">
                         <i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _('Chat with Security AI') }}
                     </button>
                 </div>
@@ -262,7 +265,7 @@
                             // Reset button after a few seconds
                             setTimeout(() => {
                                 btn.innerHTML = '<i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _("Chat with Security AI") }}';
-                                btn.style.background = '#28a745';
+                                btn.style.background = '#1e3a8a';
                                 btn.disabled = false;
                             }, 3000);
                         } else {
@@ -281,7 +284,7 @@
                     // Reset button after error
                     setTimeout(() => {
                         btn.innerHTML = '<i class="fas fa-comments" style="margin-right: 8px;"></i>{{ _("Chat with Security AI") }}';
-                        btn.style.background = '#28a745';
+                        btn.style.background = '#1e3a8a';
                         btn.disabled = false;
                     }, 3000);
                 });
