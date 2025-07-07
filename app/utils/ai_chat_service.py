@@ -9,6 +9,9 @@ import os
 import logging
 from typing import List, Dict, Any
 from flask import current_app
+from app.core.config import  Config
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +33,7 @@ class AIPhishingSecurityChat:
     def __init__(self):
         self.client = None
         if openai_available:
-            api_key = current_app.config.get('OPENAI_API_KEY') or os.getenv('OPENAI_API_KEY')
+            api_key = Config.OPENAI_API_KEY
             if api_key:
                 self.client = OpenAI(api_key=api_key)
             else:

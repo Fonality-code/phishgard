@@ -4,10 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('Phishing <h3 style="color: #495057; margin-top: 0; text-align: center;">
-            <i class="fas fa-robot" style="color: #1e3a8a; margin-right: 8px;"></i>{{ _('Need Help Understanding
-            Security?') }}
-        </h3>reness') }} - PhishGuard</title>
+    <title>{{ _('Phishing Awareness') }} - PhishGuard</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -239,7 +236,7 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>{{ _("Starting Chat...") }}';
             btn.disabled = true;
 
-            fetch('/security-chat/start', {
+            fetch('/simulation/security-chat/start', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -253,7 +250,7 @@
                     if (data.session_id) {
                         // Open chat in a new window/tab
                         const chatWindow = window.open(
-                            `/security-chat/${data.session_id}`,
+                            `/simulation/security-chat/${data.session_id}`,
                             'SecurityChat',
                             'width=800,height=600,scrollbars=yes,resizable=yes'
                         );
@@ -270,7 +267,7 @@
                             }, 3000);
                         } else {
                             // Popup blocked, redirect in same window
-                            window.location.href = `/security-chat/${data.session_id}`;
+                            window.location.href = `/simulation/security-chat/${data.session_id}`;
                         }
                     } else {
                         throw new Error('Failed to start chat session');

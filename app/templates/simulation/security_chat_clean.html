@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,25 +13,11 @@
             --primary-700: #1d4ed8;
         }
 
-        .bg-primary-600 {
-            background-color: var(--primary-600);
-        }
-
-        .bg-primary-700 {
-            background-color: var(--primary-700);
-        }
-
-        .hover\:bg-primary-700:hover {
-            background-color: var(--primary-700);
-        }
-
-        .text-primary-600 {
-            color: var(--primary-600);
-        }
-
-        .focus\:ring-primary-500:focus {
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+        .bg-primary-600 { background-color: var(--primary-600); }
+        .bg-primary-700 { background-color: var(--primary-700); }
+        .hover\:bg-primary-700:hover { background-color: var(--primary-700); }
+        .text-primary-600 { color: var(--primary-600); }
+        .focus\:ring-primary-500:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
 
         .chat-container {
             height: 500px;
@@ -51,15 +36,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typing Animation */
@@ -79,31 +57,13 @@
             animation: typing 1.4s infinite ease-in-out;
         }
 
-        .typing-dots span:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .typing-dots span:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        .typing-dots span:nth-child(3) {
-            animation-delay: 0s;
-        }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0s; }
 
         @keyframes typing {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
         }
 
         .suggestion-btn {
@@ -152,8 +112,7 @@
                 <div class="ml-3">
                     <h3 class="text-sm font-medium text-blue-800">Educational Simulation Complete</h3>
                     <p class="text-sm text-blue-700 mt-1">
-                        This was a safe, controlled phishing awareness exercise designed to help you learn about
-                        cybersecurity threats.
+                        This was a safe, controlled phishing awareness exercise designed to help you learn about cybersecurity threats.
                         Our AI assistant is here to answer your security questions.
                     </p>
                 </div>
@@ -194,11 +153,13 @@
             <!-- Input Area -->
             <div class="input-container p-4">
                 <div class="flex space-x-3">
-                    <input type="text" id="messageInput" placeholder="Ask me about cybersecurity..."
-                        class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        maxlength="500">
+                    <input type="text"
+                           id="messageInput"
+                           placeholder="Ask me about cybersecurity..."
+                           class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                           maxlength="500">
                     <button id="sendButton"
-                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center font-medium">
+                            class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center font-medium">
                         <i class="fas fa-paper-plane mr-2"></i>
                         Send
                     </button>
@@ -214,11 +175,10 @@
         <div class="mt-6 text-center bg-white rounded-lg shadow-sm p-4">
             <p class="text-sm text-gray-600 mb-3">
                 <i class="fas fa-graduation-cap mr-2 text-green-500"></i>
-                <strong>Learning Complete:</strong> This was a safe, educational phishing simulation designed to improve
-                your cybersecurity awareness.
+                <strong>Learning Complete:</strong> This was a safe, educational phishing simulation designed to improve your cybersecurity awareness.
             </p>
             <button onclick="window.close()"
-                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200">
                 <i class="fas fa-times mr-2"></i>
                 Close Security Chat
             </button>
@@ -230,7 +190,7 @@
         let isWaitingForResponse = false;
 
         // Initialize chat when page loads
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             {% if session_id %}
             chatSessionId = '{{ session_id }}';
             loadChatHistory();
@@ -249,7 +209,7 @@
             const sendButton = document.getElementById('sendButton');
 
             // Send message on Enter key
-            messageInput.addEventListener('keypress', function (e) {
+            messageInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
@@ -368,10 +328,11 @@
             messageDiv.className = `message flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
 
             const messageContent = document.createElement('div');
-            messageContent.className = `max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${isUser
+            messageContent.className = `max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                isUser
                     ? 'bg-primary-600 text-white'
                     : 'bg-gray-100 text-gray-900'
-                }`;
+            }`;
 
             messageContent.innerHTML = message.replace(/\n/g, '<br>');
 
@@ -432,5 +393,4 @@
         }
     </script>
 </body>
-
 </html>

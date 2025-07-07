@@ -128,10 +128,13 @@ def campaign_detail(id):
     analytics = PhishingSimulationService.get_campaign_analytics(id)
 
     # Get available training modules for assignment
-    training_modules = TrainingModule.query.filter_by(
+    training_modules_objects = TrainingModule.query.filter_by(
         is_active=True,
         created_by_id=current_user.id
     ).order_by(TrainingModule.title).all()
+
+    # Convert to dictionaries for JSON serialization
+    training_modules = [module.to_dict() for module in training_modules_objects]
 
     # Get employees who clicked the phishing link (failed the test)
     failed_employees = []
@@ -1112,6 +1115,20 @@ def security_chat():
     """AI-powered security chat interface"""
     target_id = request.args.get('target_id')
     return render_template('simulation/security_chat.html', target_id=target_id)
+
+
+@simulation.route('/security-chat/<session_id>')
+def security_chat_session(session_id):
+    """AI-powered security chat interface for specific session"""
+    from app.models.simulation import AISecurityChat
+
+    # Verify session exists
+    chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
+    if not chat_session:
+        flash('Chat session not found or has expired.', 'error')
+        return redirect(url_for('simulation.security_chat'))
+
+    return render_template('simulation/security_chat.html', session_id=session_id)
 
 
 @simulation.route('/security-chat/start', methods=['POST'])

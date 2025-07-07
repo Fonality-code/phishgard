@@ -55,6 +55,10 @@ def main():
         # Assign default roles to existing users
         assign_default_roles()
 
+        # Create default email templates
+        from app.utils.init_db import create_default_email_templates
+        create_default_email_templates()
+
         print("\nDatabase initialization completed!")
         print(f"Admin credentials: {admin_email} / {admin_password}")
         print("You can now start the application with: python run.py")
