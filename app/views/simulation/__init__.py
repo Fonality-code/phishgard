@@ -21,7 +21,7 @@ from app.models.simulation import (
 )
 from app.utils.simulation_service import PhishingSimulationService
 from .forms import (
-    CampaignForm, EmployeeForm, EmailTemplateForm, BulkEmployeeUploadForm
+    CampaignForm, EmployeeForm, EmailTemplateForm, BulkEmployeeUploadForm, LinkAnalyzerForm
 )
 
 simulation = Blueprint('simulation', __name__, url_prefix='/simulation')
@@ -1113,8 +1113,19 @@ def dashboard_stats_api():
 @simulation.route('/security-chat')
 def security_chat():
     """AI-powered security chat interface"""
+    from app.models.simulation import AISecurityChat
+
+    # Check if user came from clicking a phishing link
     target_id = request.args.get('target_id')
-    return render_template('simulation/security_chat.html', target_id=target_id)
+
+    # Check for existing session
+    session_id = request.args.get('session_id')
+    if session_id:
+        chat_session = AISecurityChat.query.filter_by(session_id=session_id).first()
+        if chat_session:
+            return render_template('simulation/security_chat.html', session_id=session_id)
+
+    return render_template('simulation/security_chat_clean.html', target_id=target_id)
 
 
 @simulation.route('/security-chat/<session_id>')
@@ -1284,3 +1295,36 @@ def get_chat_history(session_id):
     except Exception as e:
         logger.error(f"Error getting chat history: {str(e)}")
         return jsonify({'success': False, 'error': 'Failed to get chat history'})
+
+
+# Link Analysis endpoint
+@simulation.route('/link-analyzer', methods=['GET', 'POST'])
+@login_required
+def link_analyzer():
+    """Link analysis tool for detecting phishing links"""
+    from .forms import LinkAnalyzerForm
+    from app.utils.link_analyzer_service import LinkAnalyzerService
+
+    form = LinkAnalyzerForm()
+    analysis_result = None
+
+    if form.validate_on_submit():
+        try:
+            # Analyze the submitted URL
+            analyzer = LinkAnalyzerService()
+            analysis_result = analyzer.analyze_url(
+                url=form.url.data,
+                user_context=form.description.data,
+                user_id=current_user.id if current_user.is_authenticated else None
+            )
+
+            # Log the analysis for security tracking
+            logger.info(f"Link analysis performed by user {current_user.id}: {form.url.data}")
+
+        except Exception as e:
+            logger.error(f"Error analyzing link: {str(e)}")
+            flash('An error occurred while analyzing the link. Please try again.', 'error')
+
+    return render_template('simulation/link_analyzer.html',
+                         form=form,
+                         analysis_result=analysis_result)

@@ -1,0 +1,351 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Link Security Analyzer - PhishGuard{% endblock %}
+
+{% block page_content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1
+                    class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <i class="fas fa-link mr-3 text-blue-600"></i>Link Security Analyzer
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-600">
+                    Analyze suspicious links to detect potential phishing attempts and security threats
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-r-lg">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">How It Works</h3>
+                <p class="text-sm text-blue-700 mt-1">
+                    Our advanced security scanner analyzes URLs for phishing indicators, domain reputation,
+                    SSL security, and suspicious patterns to help protect you from cyber threats.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Analysis Form -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+
+            <div>
+                <label for="{{ form.url.id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-globe mr-2 text-blue-500"></i>Suspicious Link URL
+                </label>
+                {{ form.url() }}
+                {% if form.url.errors %}
+                <div class="mt-2 text-sm text-red-600">
+                    {% for error in form.url.errors %}
+                    <p><i class="fas fa-exclamation-circle mr-1"></i>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="mt-2 text-xs text-gray-500">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Your link will be analyzed safely without visiting the actual website
+                </p>
+            </div>
+
+            <div>
+                <label for="{{ form.description.id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-comment-alt mr-2 text-green-500"></i>Additional Context (Optional)
+                </label>
+                {{ form.description() }}
+                {% if form.description.errors %}
+                <div class="mt-2 text-sm text-red-600">
+                    {% for error in form.description.errors %}
+                    <p><i class="fas fa-exclamation-circle mr-1"></i>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="mt-2 text-xs text-gray-500">
+                    Help us provide better analysis by describing where you found this link or what made it suspicious
+                </p>
+            </div>
+
+            <div class="flex justify-center">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center shadow-sm">
+                    <i class="fas fa-search mr-2"></i>
+                    Analyze Link Security
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if analysis_result %}
+    <!-- Analysis Results -->
+    <div class="space-y-6">
+        <!-- Risk Assessment Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200
+                        {% if analysis_result.risk_level == 'Critical' %}bg-red-50 border-red-200
+                        {% elif analysis_result.risk_level == 'High' %}bg-orange-50 border-orange-200
+                        {% elif analysis_result.risk_level == 'Medium' %}bg-yellow-50 border-yellow-200
+                        {% else %}bg-green-50 border-green-200{% endif %}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        {% if analysis_result.risk_level == 'Critical' %}
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-lg"></i>
+                        </div>
+                        {% elif analysis_result.risk_level == 'High' %}
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-circle text-orange-600 text-lg"></i>
+                        </div>
+                        {% elif analysis_result.risk_level == 'Medium' %}
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation text-yellow-600 text-lg"></i>
+                        </div>
+                        {% else %}
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <h3 class="text-lg font-semibold
+                                       {% if analysis_result.risk_level == 'Critical' %}text-red-800
+                                       {% elif analysis_result.risk_level == 'High' %}text-orange-800
+                                       {% elif analysis_result.risk_level == 'Medium' %}text-yellow-800
+                                       {% else %}text-green-800{% endif %}">
+                                {{ analysis_result.risk_level }} Risk Level
+                            </h3>
+                            <p class="text-sm
+                                      {% if analysis_result.risk_level == 'Critical' %}text-red-600
+                                      {% elif analysis_result.risk_level == 'High' %}text-orange-600
+                                      {% elif analysis_result.risk_level == 'Medium' %}text-yellow-600
+                                      {% else %}text-green-600{% endif %}">
+                                {% if analysis_result.is_phishing %}
+                                Potential phishing attempt detected
+                                {% else %}
+                                No immediate phishing threats identified
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <div class="text-2xl font-bold
+                                    {% if analysis_result.risk_level == 'Critical' %}text-red-600
+                                    {% elif analysis_result.risk_level == 'High' %}text-orange-600
+                                    {% elif analysis_result.risk_level == 'Medium' %}text-yellow-600
+                                    {% else %}text-green-600{% endif %}">
+                            {{ analysis_result.risk_score }}/100
+                        </div>
+                        <div class="text-xs text-gray-500">Risk Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Score Bar -->
+            <div class="px-6 py-4">
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="h-3 rounded-full transition-all duration-500
+                               {% if analysis_result.risk_score >= 60 %}bg-red-500
+                               {% elif analysis_result.risk_score >= 40 %}bg-orange-500
+                               {% elif analysis_result.risk_score >= 20 %}bg-yellow-500
+                               {% else %}bg-green-500{% endif %}" style="width: {{ analysis_result.risk_score }}%">
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>Safe</span>
+                    <span>Dangerous</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Security Recommendations
+            </h3>
+            <ul class="space-y-2">
+                {% for recommendation in analysis_result.recommendations %}
+                <li class="flex items-start">
+                    <i class="fas fa-arrow-right text-blue-500 mr-2 mt-0.5 text-sm"></i>
+                    <span class="text-gray-700">{{ recommendation }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if analysis_result.threats_detected %}
+        <!-- Threats Detected -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-bug text-red-500 mr-2"></i>
+                Security Issues Detected
+            </h3>
+            <div class="space-y-2">
+                {% for threat in analysis_result.threats_detected %}
+                <div class="flex items-start p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <i class="fas fa-exclamation-triangle text-red-500 mr-2 mt-0.5 text-sm"></i>
+                    <span class="text-red-800 text-sm">{{ threat }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Technical Details -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-cogs text-gray-500 mr-2"></i>
+                Technical Analysis Details
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- URL Structure -->
+                {% if analysis_result.technical_details.structure %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                        <i class="fas fa-link text-blue-500 mr-2"></i>
+                        URL Structure
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                        <p><strong>Domain:</strong> {{ analysis_result.technical_details.structure.details.domain or
+                            'N/A' }}</p>
+                        <p><strong>Path:</strong> {{ analysis_result.technical_details.structure.details.path or '/' }}
+                        </p>
+                        <p><strong>Query Parameters:</strong> {{
+                            analysis_result.technical_details.structure.details.query_params or 0 }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Domain Analysis -->
+                {% if analysis_result.technical_details.domain %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                        <i class="fas fa-globe text-green-500 mr-2"></i>
+                        Domain Analysis
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                        <p><strong>Reputation:</strong>
+                            <span class="px-2 py-1 rounded-full text-xs
+                                        {% if analysis_result.technical_details.domain.reputation == 'Legitimate' %}bg-green-100 text-green-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ analysis_result.technical_details.domain.reputation }}
+                            </span>
+                        </p>
+                        <p><strong>TLD:</strong> {{ analysis_result.technical_details.domain.details.tld or 'N/A' }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Security Analysis -->
+                {% if analysis_result.technical_details.security %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                        <i class="fas fa-shield-alt text-purple-500 mr-2"></i>
+                        Security Analysis
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                        <p><strong>HTTPS:</strong>
+                            {% if analysis_result.technical_details.security.details.uses_https %}
+                            <span class="text-green-600"><i class="fas fa-check mr-1"></i>Yes</span>
+                            {% else %}
+                            <span class="text-red-600"><i class="fas fa-times mr-1"></i>No</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>SSL Valid:</strong>
+                            {% if analysis_result.technical_details.security.ssl_valid %}
+                            <span class="text-green-600"><i class="fas fa-check mr-1"></i>Yes</span>
+                            {% else %}
+                            <span class="text-red-600"><i class="fas fa-times mr-1"></i>No</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Content Analysis -->
+                {% if analysis_result.technical_details.content %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                        <i class="fas fa-file-alt text-orange-500 mr-2"></i>
+                        Content Analysis
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                        <p><strong>Accessible:</strong>
+                            {% if analysis_result.technical_details.content.accessible %}
+                            <span class="text-green-600"><i class="fas fa-check mr-1"></i>Yes</span>
+                            {% else %}
+                            <span class="text-red-600"><i class="fas fa-times mr-1"></i>No</span>
+                            {% endif %}
+                        </p>
+                        {% if analysis_result.technical_details.content.details.status_code %}
+                        <p><strong>Status Code:</strong> {{
+                            analysis_result.technical_details.content.details.status_code }}</p>
+                        {% endif %}
+                        {% if analysis_result.technical_details.content.details.redirects %}
+                        <p><strong>Redirects:</strong> {{ analysis_result.technical_details.content.details.redirects }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Analysis Metadata -->
+        <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+            <div class="flex items-center justify-between">
+                <span>
+                    <i class="fas fa-clock mr-1"></i>
+                    Analysis completed at {{ analysis_result.analysis_timestamp }}
+                </span>
+                <span>
+                    <i class="fas fa-gauge-high mr-1"></i>
+                    Confidence: {{ analysis_result.confidence_level }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Educational Section -->
+    <div class="mt-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
+            Learn to Identify Phishing Links
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div>
+                <h4 class="font-medium text-red-700 mb-2">🚩 Red Flags to Watch For:</h4>
+                <ul class="space-y-1 text-gray-700">
+                    <li>• Urgent language demanding immediate action</li>
+                    <li>• Misspelled domain names or extra characters</li>
+                    <li>• URLs with IP addresses instead of domain names</li>
+                    <li>• Suspicious file extensions (.exe, .zip in links)</li>
+                    <li>• Links that don't match the sender's organization</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-medium text-green-700 mb-2">✅ Safety Best Practices:</h4>
+                <ul class="space-y-1 text-gray-700">
+                    <li>• Hover over links to preview the destination</li>
+                    <li>• Type URLs directly instead of clicking links</li>
+                    <li>• Verify suspicious emails through other channels</li>
+                    <li>• Use bookmark shortcuts for important sites</li>
+                    <li>• Keep your browser and antivirus updated</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

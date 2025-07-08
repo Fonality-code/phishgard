@@ -75,6 +75,13 @@
                     class="fas fa-graduation-cap text-xs mr-3 {% if request.endpoint in ['simulation.training_modules', 'simulation.training_module_detail'] %}text-accent-600{% else %}text-accent-500{% endif %}"></i>
                 <span>{{ _('Training') }}</span>
             </a>
+
+            <a href="{{ url_for('simulation.link_analyzer') }}"
+                class="group flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {% if request.endpoint == 'simulation.link_analyzer' %}bg-accent-100 text-accent-900 border-l-4 border-accent-500{% else %}text-accent-700 hover:bg-accent-50 hover:text-accent-900 border-l-4 border-transparent hover:border-accent-300{% endif %}">
+                <i
+                    class="fas fa-link text-xs mr-3 {% if request.endpoint == 'simulation.link_analyzer' %}text-accent-600{% else %}text-accent-500{% endif %}"></i>
+                <span>{{ _('Link Analyzer') }}</span>
+            </a>
         </div>
     </div>
 

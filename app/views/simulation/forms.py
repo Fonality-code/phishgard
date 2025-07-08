@@ -235,3 +235,23 @@ class EmployeeFilterForm(FlaskForm):
         self.department.choices = [('', 'All Departments')] + [
             (dept[0], dept[0]) for dept in departments if dept[0]
         ]
+
+
+class LinkAnalyzerForm(FlaskForm):
+    """Form for analyzing potentially phishing links"""
+    url = StringField('URL to Analyze', validators=[
+        DataRequired(message='Please enter a URL to analyze'),
+        Length(min=7, max=2048, message='URL must be between 7 and 2048 characters')
+    ], render_kw={
+        'placeholder': 'https://example.com or paste any suspicious link here...',
+        'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+    })
+
+    description = TextAreaField('Additional Context (Optional)', validators=[
+        Optional(),
+        Length(max=500, message='Description must be less than 500 characters')
+    ], render_kw={
+        'placeholder': 'Describe where you found this link or any suspicious behavior...',
+        'rows': 3,
+        'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+    })
